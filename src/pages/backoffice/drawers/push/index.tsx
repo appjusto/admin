@@ -65,6 +65,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [name, setName] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [body, setBody] = React.useState('');
+  const [url, setUrl] = React.useState('');
   const [pushDate, setPushDate] = React.useState('');
   const [pushTime, setPushTime] = React.useState('');
   const [status, setStatus] =
@@ -117,6 +118,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       scheduledTo,
       nearby: null,
     } as Partial<PushCampaign>;
+    if (url.length) newCampaign.url = url;
     if (isGeo) {
       const nearby = {
         coordinates: {
@@ -147,6 +149,7 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setName(campaign.name);
     setTitle(campaign.title);
     setBody(campaign.body);
+    setUrl(campaign.url ?? '');
     setStatus(campaign.status);
     const { date, time } = formatTimestampToInput(campaign.scheduledTo);
     if (date) setPushDate(date);
@@ -319,6 +322,14 @@ export const PushDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 isDisabled={formDisabled}
               />
               <InputCounter max={178 - title.length} current={body.length} />
+              <CustomInput
+                id="push-url"
+                label={t('Url')}
+                placeholder={t('Informe a url de redirecionamento')}
+                value={url}
+                onChange={(ev) => setUrl(ev.target.value)}
+                isDisabled={formDisabled}
+              />
               <HStack mt="4" spacing={4}>
                 <CustomInput
                   mt="0"
