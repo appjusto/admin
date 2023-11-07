@@ -1,7 +1,6 @@
 import { Business, DeleteBusinessPayload } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 
 export const useBusinessProfile = (
@@ -12,7 +11,7 @@ export const useBusinessProfile = (
   const api = useContextApi();
   const { changeBusinessId } = useContextBusiness();
   // const businessId = business?.id;
-  const { refreshUserToken } = useContextFirebaseUser();
+
   // mutations
   const { mutateAsync: createBusinessProfile } = useCustomMutation(
     async () => {
