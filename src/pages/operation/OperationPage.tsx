@@ -70,7 +70,6 @@ const OperationPage = () => {
   const isBusinessApproved = business?.situation === 'approved';
   // handlers
   const onSubmitHandler = async () => {
-    console.log('acceptedPaymentMethods: ', acceptedPaymentMethods);
     const changes = {
       minimumOrder,
       enabled,
