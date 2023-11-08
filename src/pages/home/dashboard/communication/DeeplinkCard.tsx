@@ -12,6 +12,7 @@ import {
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useMeasurement } from 'app/api/measurement/useMeasurement';
 import { useContextBusiness } from 'app/state/business/context';
+import { FirebaseError } from 'firebase/app';
 import React from 'react';
 import { FiShare2 } from 'react-icons/fi';
 import { MdErrorOutline } from 'react-icons/md';
@@ -26,6 +27,7 @@ export const DeeplinkCard = () => {
     useBusinessProfile(business?.id);
   // state
   const [slug, setSlug] = React.useState('');
+  const [error, setError] = React.useState<string>();
   const [deeplink, setDeeplink] = React.useState('');
   const [isCopied, setIsCopied] = React.useState(false);
   // helpers
@@ -39,7 +41,8 @@ export const DeeplinkCard = () => {
       await createBusinessSlug({ businessId: business.id, slug: newSlug });
       setSlug(newSlug);
     } catch (error) {
-      // set slug not available
+      const code = (error as FirebaseError).code;
+      setError(code);
       setSlug(newSlug);
     }
   }, [business?.id, business?.name, createBusinessSlug]);
@@ -153,16 +156,18 @@ export const DeeplinkCard = () => {
           <Text>
             {t('Edite o final do link abaixo e gere o link do seu cardápio')}
           </Text>
-          <HStack mt="2" fontSize="sm" color="red">
-            <MdErrorOutline />
-            <Text>
-              {t('O final ')}
-              <Text as="span" fontWeight="semibold">
-                {slugify(business?.name ?? '')}
+          {error === 'already-exists' && (
+            <HStack mt="2" fontSize="sm" color="red">
+              <MdErrorOutline />
+              <Text>
+                {t('O final ')}
+                <Text as="span" fontWeight="semibold">
+                  {slugify(business?.name ?? '')}
+                </Text>
+                {t(' já está sendo usado por outro restaurante.')}
               </Text>
-              {t(' já está sendo usado por outro restaurante.')}
-            </Text>
-          </HStack>
+            </HStack>
+          )}
           <Flex mt="4">
             <Flex
               h="60px"
