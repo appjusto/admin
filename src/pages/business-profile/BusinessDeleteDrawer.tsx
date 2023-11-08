@@ -83,7 +83,7 @@ export const BusinessDeleteDrawer = ({
     }
   };
   //UI
-  if (isSuccess) return <Redirect to="/app/deleted" />;
+  if (isSuccess) return <Redirect to="/deleted" />;
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
       <DrawerOverlay>
