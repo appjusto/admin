@@ -132,7 +132,9 @@ export const splitOrdersValuesByPeriod = (
     period.push({ date, value: 0 });
   }
   orders.forEach((order) => {
-    const date = (order.timestamps.charged as Timestamp).toDate().getDate();
+    const date = order.timestamps?.charged
+      ? (order.timestamps.charged as Timestamp).toDate().getDate()
+      : null;
     let item = period.find((item) => item.date === date);
     if (item) item.value += 1;
   });
