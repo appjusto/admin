@@ -352,21 +352,30 @@ export default class BusinessApi {
       orderBy('createdOn', 'desc')
     );
     // returns the unsubscribe function
-    return onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) resultHandler({ current: null, units: null });
-      const businesses = documentsAs<Business>(snapshot.docs);
-      let current = businesses[0];
-      if (businessId && businesses.length > 1) {
-        const found = businesses.find((business) => business.id === businessId);
-        if (found) current = found;
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        if (snapshot.empty) resultHandler({ current: null, units: null });
+        const businesses = documentsAs<Business>(snapshot.docs);
+        let current = businesses[0];
+        if (businessId && businesses.length > 1) {
+          const found = businesses.find(
+            (business) => business.id === businessId
+          );
+          if (found) current = found;
+        }
+        const units = businesses.map((business) => ({
+          id: business.id,
+          name: business.name ?? 'Sem nome',
+          address: business.businessAddress?.address ?? 'Não informado',
+        }));
+        resultHandler({ current, units });
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
       }
-      const units = businesses.map((business) => ({
-        id: business.id,
-        name: business.name ?? 'Sem nome',
-        address: business.businessAddress?.address ?? 'Não informado',
-      }));
-      resultHandler({ current, units });
-    });
+    );
   }
 
   // profile notes
@@ -976,11 +985,18 @@ export default class BusinessApi {
       this.refs.getHubsterStoresRef(),
       where('businessId', '==', businessId)
     );
-    return onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) return resultHandler(null);
-      const storeDoc = snapshot.docs[0];
-      return resultHandler(documentAs<HubsterStore>(storeDoc));
-    });
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        if (snapshot.empty) return resultHandler(null);
+        const storeDoc = snapshot.docs[0];
+        return resultHandler(documentAs<HubsterStore>(storeDoc));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
   }
 
   async createHubsterStore(store: HubsterStore) {

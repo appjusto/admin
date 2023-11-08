@@ -86,21 +86,21 @@ const Home = () => {
   // states
   const [isTimeout, setIsTimeout] = React.useState(false);
   // helpers
-  const userWithGrantedRole = isBackofficeUser || adminRole != null;
+  const userWithGrantedRole = isBackofficeUser || typeof adminRole === 'string';
   // side effects
   React.useEffect(() => {
     const timer = setTimeout(() => setIsTimeout(true), timeoutLimit * 1000);
     return () => clearTimeout(timer);
   }, []);
   // UI
-  if (business?.situation === 'deleted') {
-    if (isBackofficeUser) return <Redirect to="/backoffice/businesses" />;
-    else return <Redirect to={`/deleted`} />;
-  }
   if (!business) {
     if (isBackofficeUser) return <Redirect to="/backoffice" />;
     else if (isTimeout && business === null)
       return <Redirect to={`/onboarding`} />;
+  }
+  if (business?.situation === 'deleted') {
+    if (isBackofficeUser) return <Redirect to="/backoffice/businesses" />;
+    else return <Redirect to={`/deleted`} />;
   }
   if (business && business?.onboarding !== 'completed' && !isBackofficeUser) {
     return (

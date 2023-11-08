@@ -183,15 +183,15 @@ export const BusinessProvider = ({ children }: Props) => {
   // side effects
   // refresh manager roles
   React.useEffect(() => {
-    if (!businessId) return;
+    if (!business?.id) return;
     if (!manager?.roles) return;
-    const role = manager.roles[businessId];
+    const role = manager.roles[business.id];
     if (role) {
       refreshUserToken(role);
     } else {
       refreshUserToken(null);
     }
-  }, [businessId, manager, refreshUserToken]);
+  }, [business?.id, manager, refreshUserToken]);
   React.useEffect(() => {
     if (!user) return;
     if (isBackofficeUser !== false) return;
@@ -212,9 +212,6 @@ export const BusinessProvider = ({ children }: Props) => {
       business.id
     );
   }, [user, isBackofficeUser, business?.id]);
-  // React.useEffect(() => {
-  //   if (business?.id && refreshUserToken) refreshUserToken(business?.id);
-  // }, [business?.id, refreshUserToken]);
   React.useEffect(() => {
     if (current === undefined) return;
     updateContextBusiness(current);

@@ -58,7 +58,7 @@ export const FirebaseUserProvider = ({ children }: Props) => {
       try {
         const token = await user.getIdTokenResult(true);
         const claims: { [key: string]: any } = token.claims ?? {};
-        if (Object.keys(claims).includes('permissions')) {
+        if (claims.permissions) {
           setBackofficePermissions(claims.permissions as UserPermissions);
         }
       } catch (error) {
