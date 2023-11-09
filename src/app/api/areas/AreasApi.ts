@@ -71,10 +71,17 @@ export default class AreasApi {
       where('city', '==', city)
     );
     // returns the unsubscribe function
-    return onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) resultHandler(null);
-      else resultHandler(documentsAs<Area>(snapshot.docs));
-    });
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        if (snapshot.empty) resultHandler(null);
+        else resultHandler(documentsAs<Area>(snapshot.docs));
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
   }
   async fetchAreaByCity(state: string, city: string) {
     try {

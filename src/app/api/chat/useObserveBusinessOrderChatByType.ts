@@ -67,6 +67,7 @@ export const useObserveBusinessOrderChatByType = (
         return api.chat().sendMessage({
           orderId,
           orderCode: order.code,
+          orderStatus: order.status,
           participantsIds: [business.id, counterpartId],
           from,
           ...data,

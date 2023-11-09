@@ -22,6 +22,7 @@ import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { useContextFirebaseUser } from '../auth/context';
+import { useContextManagerProfile } from '../manager/context';
 import { useContextStaffProfile } from '../staff/context';
 import { shouldUpdateState } from '../utils';
 
@@ -94,6 +95,7 @@ export const BusinessProvider = ({ children }: Props) => {
   // context
   const queryClient = useQueryClient();
   const { user, refreshUserToken } = useContextFirebaseUser();
+  const { manager } = useContextManagerProfile();
   const { isBackofficeUser } = useContextStaffProfile();
   const { platformFees } = usePlatformFees();
   // const businesses = useObserveBusinessManagedBy(user?.email);
@@ -179,6 +181,17 @@ export const BusinessProvider = ({ children }: Props) => {
     });
   };
   // side effects
+  // refresh manager roles
+  React.useEffect(() => {
+    if (!business?.id) return;
+    if (!manager?.roles) return;
+    const role = manager.roles[business.id];
+    if (role) {
+      refreshUserToken(role);
+    } else {
+      refreshUserToken(null);
+    }
+  }, [business?.id, manager, refreshUserToken]);
   React.useEffect(() => {
     if (!user) return;
     if (isBackofficeUser !== false) return;
@@ -199,9 +212,6 @@ export const BusinessProvider = ({ children }: Props) => {
       business.id
     );
   }, [user, isBackofficeUser, business?.id]);
-  React.useEffect(() => {
-    if (business?.id && refreshUserToken) refreshUserToken(business?.id);
-  }, [business?.id, refreshUserToken]);
   React.useEffect(() => {
     if (current === undefined) return;
     updateContextBusiness(current);

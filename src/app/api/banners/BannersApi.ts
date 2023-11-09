@@ -1,4 +1,5 @@
 import { Banner, BannersOrdering, ClientFlavor, WithId } from '@appjusto/types';
+import * as Sentry from '@sentry/react';
 import {
   addDoc,
   deleteDoc,
@@ -34,10 +35,17 @@ export default class BannersApi {
   ): Unsubscribe {
     const ref = this.refs.getBannerOrderingRef();
     // returns the unsubscribe function
-    return onSnapshot(ref, (snapshot) => {
-      if (snapshot.exists()) resultHandler(snapshot.data());
-      else resultHandler(null);
-    });
+    return onSnapshot(
+      ref,
+      (snapshot) => {
+        if (snapshot.exists()) resultHandler(snapshot.data());
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
   }
 
   observeBannerById(

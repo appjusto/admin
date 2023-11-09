@@ -1,13 +1,5 @@
 import { PlatformAccess } from '@appjusto/types';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  Wrap,
-  WrapItem,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useUpdatePlatform } from 'app/api/platform/useUpdatePlatform';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { CustomInput } from 'common/components/form/input/CustomInput';
@@ -24,9 +16,11 @@ export const PlatformVersions = ({
   // props
   const {
     consumer: consumerVersion,
+    consumerWeb: consumerWebVersion,
     courier: courierVersion,
     businessWeb: businessWebVersion,
     businessApp: businessAppVersion,
+    ordersWeb: ordersWebVersion,
   } = currentVersions ?? {};
   // context
   const { isBackofficeSuperuser } = useContextFirebaseUser();
@@ -34,9 +28,11 @@ export const PlatformVersions = ({
     useUpdatePlatform();
   // state
   const [consumer, setConsumer] = React.useState('');
+  const [consumerWeb, setConsumerWeb] = React.useState('');
   const [courier, setCourier] = React.useState('');
   const [businessWeb, setBusinessWeb] = React.useState('');
   const [businessApp, setBusinessApp] = React.useState('');
+  const [ordersWeb, setOrdersWeb] = React.useState('');
   const [isEditing, setIsEditing] = React.useState(false);
   // handlers
   const updateCurrentVersions = () => {
@@ -44,9 +40,11 @@ export const PlatformVersions = ({
     const changes = {
       currentVersions: {
         consumer,
+        consumerWeb,
         courier,
         businessWeb,
         businessApp,
+        ordersWeb,
       },
     } as Partial<PlatformAccess>;
     updatePlatformAccess(changes);
@@ -54,10 +52,19 @@ export const PlatformVersions = ({
   // side effects
   React.useEffect(() => {
     if (consumerVersion) setConsumer(consumerVersion);
+    if (consumerWebVersion) setConsumerWeb(consumerWebVersion);
     if (courierVersion) setCourier(courierVersion);
     if (businessWebVersion) setBusinessWeb(businessWebVersion);
     if (businessAppVersion) setBusinessApp(businessAppVersion);
-  }, [consumerVersion, courierVersion, businessWebVersion, businessAppVersion]);
+    if (ordersWebVersion) setOrdersWeb(ordersWebVersion);
+  }, [
+    consumerVersion,
+    consumerWebVersion,
+    courierVersion,
+    businessWebVersion,
+    businessAppVersion,
+    ordersWebVersion,
+  ]);
   React.useEffect(() => {
     if (!updatePlatformAccessResult.isSuccess) return;
     setIsEditing(false);
@@ -82,85 +89,130 @@ export const PlatformVersions = ({
         )}
       </Flex>
       {!isEditing ? (
-        <Wrap mt="2" justify="space-between">
-          <WrapItem>
+        <Flex
+          mt="4"
+          flexDir={{ base: 'column', md: 'row' }}
+          gap={{ base: 6, lg: 14 }}
+          fontSize="sm"
+        >
+          <VStack spacing={1} alignItems="flex-start">
+            <Text fontWeight="semibold">{t('Consumidor:')}</Text>
             <Text fontWeight="500">
-              {t('App Consumidor: ')}
+              {t('Mobile ')}
               <Text as="span" fontWeight="700">
                 {consumer ?? 'N/E'}
               </Text>
             </Text>
-          </WrapItem>
-          <WrapItem>
             <Text fontWeight="500">
-              {t('App Entregador: ')}
+              {t('Web ')}
+              <Text as="span" fontWeight="700">
+                {consumerWeb ?? 'N/E'}
+              </Text>
+            </Text>
+          </VStack>
+
+          <VStack spacing={1} alignItems="flex-start">
+            <Text fontWeight="semibold">{t('Entregador:')}</Text>
+            <Text fontWeight="500">
+              {t('Mobile: ')}
               <Text as="span" fontWeight="700">
                 {courier ?? 'N/E'}
               </Text>
             </Text>
-          </WrapItem>
-          <WrapItem>
+          </VStack>
+
+          <VStack spacing={1} alignItems="flex-start">
+            <Text fontWeight="semibold">{t('Restaurante:')}</Text>
             <Text fontWeight="500">
-              {t('Restaurantes web: ')}
+              {t('Admin/backoffice: ')}
               <Text as="span" fontWeight="700">
                 {businessWeb ?? 'N/E'}
               </Text>
             </Text>
-          </WrapItem>
-          <WrapItem>
             <Text fontWeight="500">
-              {t('Restaurante mobile: ')}
+              {t('Gestor web: ')}
+              <Text as="span" fontWeight="700">
+                {ordersWeb ?? 'N/E'}
+              </Text>
+            </Text>
+            <Text fontWeight="500">
+              {t('Gestor mobile: ')}
               <Text as="span" fontWeight="700">
                 {businessApp ?? 'N/E'}
               </Text>
             </Text>
-          </WrapItem>
-        </Wrap>
+          </VStack>
+        </Flex>
       ) : (
         <>
-          <Wrap mt="2" justify="space-between">
-            <WrapItem>
+          <Flex
+            mt="4"
+            flexDir={{ base: 'column', md: 'row' }}
+            gap={{ base: 6, lg: 14 }}
+            fontSize="sm"
+          >
+            <VStack spacing={1} alignItems="flex-start">
+              <Text fontWeight="semibold">{t('Consumidor:')}</Text>
               <CustomInput
-                id="consumer-version"
                 mt="0"
+                id="consumer-mob-version"
                 maxW={{ md: '220px' }}
                 value={consumer}
                 onChange={(ev) => setConsumer(ev.target.value)}
-                label={t('App Consumidor')}
+                label={t('Mobile')}
                 // placeholder={t('Digite o valor buscado')}
               />
-            </WrapItem>
-            <WrapItem>
+              <CustomInput
+                mt="0"
+                id="consumer-web-version"
+                maxW={{ md: '220px' }}
+                value={consumerWeb}
+                onChange={(ev) => setConsumerWeb(ev.target.value)}
+                label={t('Web')}
+                // placeholder={t('Digite o valor buscado')}
+              />
+            </VStack>
+
+            <VStack spacing={1} alignItems="flex-start">
+              <Text fontWeight="semibold">{t('Entregador:')}</Text>
               <CustomInput
                 id="courier-version"
                 mt="0"
                 maxW={{ md: '220px' }}
                 value={courier}
                 onChange={(ev) => setCourier(ev.target.value)}
-                label={t('App Entregador')}
+                label={t('Mobile')}
               />
-            </WrapItem>
-            <WrapItem>
+            </VStack>
+
+            <VStack spacing={1} alignItems="flex-start">
+              <Text fontWeight="semibold">{t('Restaurante:')}</Text>
               <CustomInput
-                id="business-web-version"
+                id="business-admin-version"
                 mt="0"
                 maxW={{ md: '220px' }}
                 value={businessWeb}
                 onChange={(ev) => setBusinessWeb(ev.target.value)}
-                label={t('Restaurantes web')}
+                label={t('Admin/backoffice')}
               />
-            </WrapItem>
-            <WrapItem>
+              <CustomInput
+                id="business-orders-version"
+                mt="0"
+                maxW={{ md: '220px' }}
+                value={ordersWeb}
+                onChange={(ev) => setOrdersWeb(ev.target.value)}
+                label={t('Gestor web')}
+              />
               <CustomInput
                 id="business-app-version"
                 mt="0"
                 maxW={{ md: '220px' }}
                 value={businessApp}
                 onChange={(ev) => setBusinessApp(ev.target.value)}
-                label={t('Restaurantes mobile')}
+                label={t('Gestor mobile')}
               />
-            </WrapItem>
-          </Wrap>
+            </VStack>
+          </Flex>
           <Flex mt="4" justifyContent="flex-end">
             <HStack>
               <Button

@@ -1,7 +1,6 @@
 import { Business, DeleteBusinessPayload } from '@appjusto/types';
 import { useCustomMutation } from 'app/api/mutation/useCustomMutation';
 import { useContextApi } from 'app/state/api/context';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 
 export const useBusinessProfile = (
@@ -12,13 +11,13 @@ export const useBusinessProfile = (
   const api = useContextApi();
   const { changeBusinessId } = useContextBusiness();
   // const businessId = business?.id;
-  const { refreshUserToken } = useContextFirebaseUser();
+
   // mutations
   const { mutateAsync: createBusinessProfile } = useCustomMutation(
     async () => {
       const business = await api.business().createBusinessProfile();
       changeBusinessId(business.id, false);
-      if (refreshUserToken) await refreshUserToken(business.id);
+      // if (refreshUserToken) await refreshUserToken(business.id);
       return console.log('Restaurante criado!');
     },
     'createBusinessProfile',
@@ -63,7 +62,7 @@ export const useBusinessProfile = (
       const newBusiness = await api
         .business()
         .cloneBusiness(businessId!, isFromScratch);
-      if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
+      // if (refreshUserToken && newBusiness?.id) refreshUserToken(newBusiness.id);
       return newBusiness;
     }, 'cloneBusiness');
   const {
