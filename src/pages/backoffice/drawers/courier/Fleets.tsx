@@ -8,7 +8,8 @@ import { t } from 'utils/i18n';
 export const Fleets = () => {
   // context
   const { courier } = useContextCourierProfile();
-  const fleet = useGetFleetById(courier?.fleetsIds[0]);
+  const fleetId = courier?.fleetsIds ? courier?.fleetsIds[0] : undefined;
+  const fleet = useGetFleetById(fleetId);
   // state
   const [fleets, setFleets] = React.useState<Fleet[]>([]);
   // side effects
