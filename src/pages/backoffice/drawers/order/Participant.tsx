@@ -31,7 +31,7 @@ interface ParticipantProps {
   deliveries?: number;
   rejected?: number;
   address?: string;
-  additionalInfo?: string;
+  additionalInfo?: string | null;
   onboarding?: FieldValue;
   dropIssues?: Issue[] | null;
   removeCourier?(issue?: Issue, comment?: string): void;

@@ -128,6 +128,7 @@ export const BusinessRegister = () => {
             'link-on-social',
             'ads',
             'consumer-home',
+            'consumer-home-mousse',
             'dispatch-by-courier',
           ] as BusinessTag[]
         }

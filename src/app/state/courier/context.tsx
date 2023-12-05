@@ -44,7 +44,7 @@ export const courierWatchedFields: (keyof CourierProfile)[] = [
   'mode',
   'bankAccount',
   'email',
-  'fleet',
+  'fleetsIds',
   'tags',
 ];
 

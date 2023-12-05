@@ -202,7 +202,7 @@ export const getEditableProfile = (profile: any, isEditingEmail: boolean) => {
     'onboarded',
     'notificationToken',
     'appVersion',
-    'fleet',
+    'fleetsIds',
     'mode',
     'email',
   ];
