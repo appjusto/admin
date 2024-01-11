@@ -7,15 +7,14 @@ import { useContextAppRequests } from 'app/state/requests/context';
 import { useContextServerTime } from 'app/state/server-time';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import { FilterText } from 'common/components/backoffice/FilterText';
-import { getBusinessServiceActivationDate } from 'pages/insurance/utils';
-import { OnboardingProps } from 'pages/onboarding/types';
-import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
+import { OnboardingProps } from 'pages/onboarding/types';
+import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import React from 'react';
 import { MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
-import { getBusinessService, getServiceCreatedByEmail } from 'utils/functions';
+import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { FleetPage } from './FleetPage';
 import { LogisticsOptions } from './LogisticsOptions';
@@ -55,14 +54,6 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   const showFleetPendingAlert = React.useMemo(
     () => !onboarding && isFleetPending && business?.situation === 'approved',
     [onboarding, isFleetPending, business?.situation]
-  );
-  const logisticsActivatedAt = React.useMemo(
-    () => getBusinessServiceActivationDate(logisticsAccepted),
-    [logisticsAccepted]
-  );
-  const createdByEmail = React.useMemo(
-    () => getServiceCreatedByEmail(logisticsAccepted),
-    [logisticsAccepted]
   );
   // handlers
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -224,7 +215,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           </Box>
         </Flex>
       )}
-      {logisticsAccepted && logisticsActivatedAt && (
+      {logisticsAccepted && (
         <Flex
           mt="4"
           p="4"
@@ -236,19 +227,6 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           <Center>
             <Icon as={MdInfo} w="24px" h="24px" />
           </Center>
-          <Box ml="4">
-            <Text fontWeight="700">
-              {t(`Entrega AppJusto ativada em ${logisticsActivatedAt}`)}
-            </Text>
-            {createdByEmail && (
-              <Text fontSize="14px" fontWeight="700">
-                {t('Solicitada por: ')}
-                <Text as="span" fontWeight="500">
-                  {createdByEmail}
-                </Text>
-              </Text>
-            )}
-          </Box>
         </Flex>
       )}
       {showTabs && (

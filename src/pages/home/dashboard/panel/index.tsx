@@ -1,5 +1,4 @@
 import { Box, Flex, Stack, Text, Tooltip } from '@chakra-ui/react';
-import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextBusinessDashboard } from 'app/state/dashboards/business';
 import { MaintenanceBox } from 'common/components/MaintenanceBox';
@@ -10,15 +9,13 @@ import { MdOutlineInfo } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SupportMaterials } from '../communication/SupportMaterials';
-import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
-import { InsuranceModal } from './InsuranceModal';
 import LineChart from './LineChart';
+import BannersContainer from './banners/BannersContainer';
 
 export const Panel = () => {
   // context
-  const { adminRole } = useContextFirebaseUser();
-  const { business, banners } = useContextBusiness();
+  const { banners } = useContextBusiness();
   const {
     todayCount,
     todayValue,
@@ -76,15 +73,6 @@ export const Panel = () => {
     () => currentWeekCount! > 0 || lastWeekCount! > 0,
     [currentWeekCount, lastWeekCount]
   );
-  const insuranceModalIsOpen = React.useMemo(() => {
-    const isUserTarget = adminRole === 'owner' || adminRole === 'manager';
-    const insurance = business?.services?.find(
-      (service) => service.name === 'insurance'
-    );
-    return (
-      isUserTarget && !insurance && !business?.settings?.acknowledgeInsurance
-    );
-  }, [adminRole, business?.services, business?.settings?.acknowledgeInsurance]);
   // side effects
   React.useEffect(() => {
     setCurrentMonth(I18n.strftime(new Date(), '%B'));
@@ -388,7 +376,6 @@ export const Panel = () => {
         )}
       </Box>
       <SupportMaterials />
-      <InsuranceModal isOpen={insuranceModalIsOpen} />
     </Box>
   );
 };

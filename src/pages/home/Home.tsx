@@ -5,8 +5,8 @@ import { MenuContextProvider } from 'app/state/menu/context';
 import { OrdersContextProvider } from 'app/state/order';
 import { useContextStaffProfile } from 'app/state/staff/context';
 import { Loading } from 'common/components/Loading';
-import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import PageLayout from 'pages/PageLayout';
+import { BasicErrorPage } from 'pages/error/BasicErrorPage';
 import { AdminAccessRoute } from 'pages/routes/AdminAccessRoute';
 import React from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
@@ -68,9 +68,6 @@ const TeamPage = React.lazy(
 );
 const LogisticsPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/logistics/LogisticsPage')
-);
-const InsurancePage = React.lazy(
-  () => import(/* webpackPrefetch: true */ 'pages/insurance/InsurancePage')
 );
 const IntegrationsPage = React.lazy(
   () =>
@@ -179,10 +176,6 @@ const Home = () => {
                 <AdminAccessRoute
                   path={`${path}/logistics`}
                   component={LogisticsPage}
-                />
-                <AdminAccessRoute
-                  path={`${path}/insurance`}
-                  component={InsurancePage}
                 />
                 <AdminAccessRoute
                   path={`${path}/integrations`}

@@ -2,7 +2,6 @@ import { useContextStaffProfile } from 'app/state/staff/context';
 import BankingInformation from 'pages/banking-information/BankingInformation';
 import BusinessProfile from 'pages/business-profile/BusinessProfile';
 import DeliveryArea from 'pages/delivery-area/DeliveryArea';
-import InsurancePage from 'pages/insurance/InsurancePage';
 import LogisticsPage from 'pages/logistics/LogisticsPage';
 import { ManagerProfile } from 'pages/manager-profile/ManagerProfile';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
@@ -50,11 +49,6 @@ const Onboarding = () => {
           </OnboardingStep>
         </Route>
         <Route path={`${path}/6`}>
-          <OnboardingStep>
-            <InsurancePage redirect={`${path}/7`} onboarding="6" />
-          </OnboardingStep>
-        </Route>
-        <Route path={`${path}/7`}>
           <OnboardingStep>
             <Commitments redirect={`${path}/complete`} />
           </OnboardingStep>
