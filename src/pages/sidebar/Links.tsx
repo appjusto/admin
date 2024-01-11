@@ -49,7 +49,6 @@ export const Links = (props: BoxProps) => {
           label={t('Dados bancários')}
         />
         <LinkItem to={`${url}/logistics`} label={t('Entrega')} />
-        <LinkItem to={`${url}/insurance`} label={t('Cobertura')} />
         <LinkItem to={`${url}/integrations`} label={t('Integrações')} />
       </Box>
     </Box>
