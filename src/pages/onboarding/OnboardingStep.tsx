@@ -22,8 +22,8 @@ const OnboardingStep = ({ children }: Props) => {
           position={{ md: 'fixed' }}
           top="0"
           left="0"
-          pt="24"
-          px="8"
+          pt="20"
+          px={{ base: '4', md: '8' }}
           pb="10"
           w={{ base: '100%', md: '296px', lg: '346px' }}
           minW={{ md: '296px', lg: '346px' }}
@@ -48,11 +48,10 @@ const OnboardingStep = ({ children }: Props) => {
           <Checklist mt="8" currentStepIndex={currentStepIndex} />
         </Box>
         <Box
-          // mt={{ base: '426px', md: '0' }}
           ml={{ md: '296px', lg: '346px' }}
-          w="max-content"
-          pt={{ base: '10', md: '20' }}
-          px={{ base: '8', lg: '12' }}
+          w="full"
+          pt={{ base: '10', md: '14' }}
+          px={{ base: '4', md: '8', lg: '12' }}
         >
           {children}
         </Box>

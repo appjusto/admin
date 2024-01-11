@@ -9,7 +9,7 @@ interface OptionCardProps {
 export const OptionCard = ({ isSelected, children }: OptionCardProps) => {
   return (
     <Box
-      p="8"
+      p={{ base: '4', md: '8' }}
       w="100%"
       border={isSelected ? '2px solid' : '1px solid'}
       borderColor={isSelected ? 'green.500' : '#C8D7CB'}

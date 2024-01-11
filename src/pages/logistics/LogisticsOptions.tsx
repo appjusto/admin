@@ -1,21 +1,9 @@
 import { BusinessService } from '@appjusto/types';
-import {
-  Box,
-  Flex,
-  Icon,
-  Radio,
-  RadioGroup,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Badge, Flex, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
-import { ReactComponent as motocycleGray } from 'common/img/motocycle-gray.svg';
-import { ReactComponent as motocycleGreen } from 'common/img/motocycle-green.svg';
 import React from 'react';
 import { t } from 'utils/i18n';
-import { FeeDescriptionItem } from '../FeeDescriptionItem';
 import { OptionCard } from '../OptionCard';
-import { LogisticsItem } from './LogisticsItem';
 import { LogisticsType } from './LogisticsPage';
 
 interface LogisticsOptionsProps {
@@ -46,6 +34,8 @@ export const LogisticsOptions = ({
     () => platformFees?.logistics?.percent ?? 0,
     [platformFees?.logistics?.percent]
   );
+  // TODO: colocar 8.5 no firestore
+  console.log(logisticsBaseFee);
   // handlers
   // side effects
   React.useEffect(() => {
@@ -60,123 +50,63 @@ export const LogisticsOptions = ({
   // UI
   if (logisticsDisabled) {
     return (
-      <Box mt="4" maxW="468px">
-        <RadioGroup
-          value={logistics}
-          onChange={(value) => handleChange(value as LogisticsType)}
-        >
-          <VStack spacing={4} alignItems="flex-start">
-            <OptionCard isSelected={logistics === 'private'}>
-              <Flex>
-                <Radio value="private">
-                  <Text ml="2" fontSize="18px" fontWeight="700">
-                    {t('Entrega Própria')}
-                  </Text>
-                </Radio>
-                <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
-              </Flex>
-              <FeeDescriptionItem fee={commissionBaseFee} />
-              <LogisticsItem
-                title={t('A entrega será realizada pelo próprio restaurante')}
-                iconDisabled
-              ></LogisticsItem>
-            </OptionCard>
-
-            <OptionCard isSelected={logistics === 'appjusto'}>
-              <Flex>
-                <Radio value="appjusto" isDisabled>
-                  <Text ml="2" fontSize="18px" fontWeight="700">
-                    {t('Entrega AppJusto')}
-                  </Text>
-                </Radio>
-                <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
-              </Flex>
-              <Box
-                mt="4"
-                p="4"
-                color="black"
-                bgColor="yellow"
-                border="1px solid black"
-                borderRadius="lg"
-              >
-                <Text>
-                  {t(
-                    'O AppJusto ainda não possui rede de entregadores na sua cidade. Mas não se preocupe, avisaremos assim que este serviço estiver disponível.'
-                  )}
-                </Text>
-              </Box>
-              <Box>
-                <FeeDescriptionItem fee={availableFee} isDisabled />
-                <LogisticsItem
-                  title={t(
-                    'A entrega será realizada por nossa rede de entregadores e por parceiros   '
-                  )}
-                  isDisabled
-                />
-              </Box>
-            </OptionCard>
-          </VStack>
-        </RadioGroup>
-      </Box>
+      <Flex mt="4" gap="4">
+        <OptionCard isSelected={logistics === 'appjusto'}>
+          <Flex flexDir="column" justifyContent="center" alignItems="center">
+            <Text fontSize="sm">{t('Com logística')}</Text>
+          </Flex>
+        </OptionCard>
+        <OptionCard isSelected={logistics !== 'appjusto'}>
+          <Text fontSize="sm">{t('Sem logística')}</Text>
+        </OptionCard>
+      </Flex>
     );
   }
   return (
-    <Box mt="4" maxW="468px">
-      <RadioGroup
-        value={logistics}
-        onChange={(value) => handleChange(value as LogisticsType)}
-      >
-        <VStack spacing={4} alignItems="flex-start">
-          <OptionCard isSelected={logistics === 'appjusto'}>
-            <Flex>
-              <Radio value="appjusto">
-                <Text ml="2" fontSize="18px" fontWeight="700">
-                  {t('Entrega AppJusto')}
-                </Text>
-              </Radio>
-              <Icon as={motocycleGreen} ml="6" w="48px" h="48px" />
-            </Flex>
-            <FeeDescriptionItem fee={availableFee} />
-            {logisticsAvailable === 'appjusto' ? (
-              <LogisticsItem
-                title={t(
-                  'A entrega será realizada por nossa rede de entregadores e por parceiros   '
-                )}
-              />
-            ) : (
-              <Box
-                mt="4"
-                p="4"
-                color="black"
-                bgColor="yellow"
-                border="1px solid black"
-                borderRadius="lg"
-              >
-                <Text>
-                  {t(
-                    'O AppJusto ainda não possui rede própria de entregadores na sua cidade. Mas não se preocupe, realizaremos suas entregas por meio de empresas parceiras.'
-                  )}
-                </Text>
-              </Box>
-            )}
-          </OptionCard>
-          <OptionCard isSelected={logistics === 'private'}>
-            <Flex>
-              <Radio value="private">
-                <Text ml="2" fontSize="18px" fontWeight="700">
-                  {t('Entrega Própria')}
-                </Text>
-              </Radio>
-              <Icon as={motocycleGray} ml="6" w="48px" h="48px" />
-            </Flex>
-            <FeeDescriptionItem fee={commissionBaseFee} />
-            <LogisticsItem
-              title={t('A entrega será realizada pelo próprio restaurante')}
-              iconDisabled
-            ></LogisticsItem>
-          </OptionCard>
-        </VStack>
-      </RadioGroup>
-    </Box>
+    <Flex mt="4" gap="4" flexDir={{ base: 'column', lg: 'row' }}>
+      <OptionCard isSelected={logistics === 'appjusto'}>
+        <Flex
+          minH="96px"
+          flexDir="column"
+          alignItems="center"
+          pb="6"
+          borderBottom="1px solid #F2F4F5"
+        >
+          <Text fontSize="sm">{t('Com logística')}</Text>
+          <Text
+            mt="2"
+            fontSize="xl"
+            fontWeight="medium"
+            textAlign="center"
+            color="black"
+          >
+            {t('R$ 69,90 por mês + 8,5% por pedido')}
+          </Text>
+          <Badge bgColor="#EBFBEF" color="#1C7B34" mt="6" mb="-8">
+            Recomendado
+          </Badge>
+        </Flex>
+      </OptionCard>
+      <OptionCard isSelected={logistics !== 'appjusto'}>
+        <Flex
+          minH="96px"
+          flexDir="column"
+          alignItems="center"
+          pb="6"
+          borderBottom="1px solid #F2F4F5"
+        >
+          <Text fontSize="sm">{t('Sem logística')}</Text>
+          <Text
+            mt="2"
+            fontSize="xl"
+            fontWeight="medium"
+            textAlign="center"
+            color="black"
+          >
+            {t('R$69,90 por mês')}
+          </Text>
+        </Flex>
+      </OptionCard>
+    </Flex>
   );
 };

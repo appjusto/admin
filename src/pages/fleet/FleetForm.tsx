@@ -6,10 +6,10 @@ import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import React from 'react';
 import { t } from 'utils/i18n';
+import { fleetValidation } from '../logistics/utils';
 import { FleetIncrementalItem } from './FleetIncrementalItem';
-import { fleetValidation } from './utils';
 
-export const FleetPage = () => {
+export const FleetForm = () => {
   // context
   const { user } = useContextFirebaseUser();
   const { dispatchAppRequestResult } = useContextAppRequests();
