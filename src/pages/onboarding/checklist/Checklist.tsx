@@ -46,8 +46,7 @@ export const Checklist = ({
     t('Dados do restaurante'),
     t('Dados bancários'),
     t('Endereço e raio de entrega'),
-    t('Modelo de entrega'),
-    t('Modelo de cobertura'),
+    t('Plano de contratação'),
     t('Compromissos'),
   ];
   return (

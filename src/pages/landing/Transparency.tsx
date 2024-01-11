@@ -14,7 +14,9 @@ export const Transparency = () => {
           <Box maxW={{ md: '312px', lg: '100%' }}>
             <SectionHeading>{t('Nosso preço é justo')}</SectionHeading>
             <Text mb="6" fontSize="18px" lineHeight="26px" fontWeight="500">
-              {t('Compare as taxas cobradas e entenda por que você ganha mais ao usar o AppJusto:')}
+              {t(
+                'Compare as taxas cobradas e entenda por que você ganha mais ao usar o AppJusto:'
+              )}
             </Text>
             <Flex flexDir={{ base: 'column', xl: 'row' }}>
               <Box
@@ -28,10 +30,12 @@ export const Transparency = () => {
                   <Image src={logo} width="120px" />
                 </Box>
                 <Text mt="4" fontSize="18px" lineHeight="26px" fontWeight="500">
-                  {t('Relações mais justas começam com taxas mais justas para você')}
+                  {t(
+                    'Relações mais justas começam com taxas mais justas para você'
+                  )}
                 </Text>
                 <Text fontSize="5xl" fontWeight="700" lineHeight="5xl">
-                  5%
+                  8.5%
                 </Text>
                 <Text fontSize="lg" lineHeight="26px">
                   {t('+ 2,42% da operadora financeira')}
@@ -46,13 +50,24 @@ export const Transparency = () => {
                 borderRadius="16px"
                 p="6"
               >
-                <Text mt="4" color="#DC3545" fontSize="2xl" fontWeight="700" lineHeight="26px">
+                <Text
+                  mt="4"
+                  color="#DC3545"
+                  fontSize="2xl"
+                  fontWeight="700"
+                  lineHeight="26px"
+                >
                   {t('Outras plataformas')}
                 </Text>
                 <Text mt="6" fontSize="lg" lineHeight="26px">
                   {t('Outras plataformas com logística cobram até')}
                 </Text>
-                <Text color="#DC3545" fontSize="5xl" fontWeight="700" lineHeight="5xl">
+                <Text
+                  color="#DC3545"
+                  fontSize="5xl"
+                  fontWeight="700"
+                  lineHeight="5xl"
+                >
                   27%
                 </Text>
               </Box>
