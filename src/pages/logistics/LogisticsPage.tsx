@@ -1,13 +1,5 @@
 import { Business, BusinessService } from '@appjusto/types';
-import {
-  Box,
-  Center,
-  Checkbox,
-  Flex,
-  Icon,
-  Link,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Checkbox, Flex, Link, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -19,7 +11,6 @@ import { isNewValidOnboardingStep } from 'pages/onboarding/utils';
 import PageFooter from 'pages/PageFooter';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { MdInfo } from 'react-icons/md';
 import { Redirect } from 'react-router-dom';
 import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -39,8 +30,6 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
   );
   const { isSuccess, isLoading } = updateResult;
   // state
-  const [logisticsAccepted, setLogisticsAccepted] =
-    React.useState<BusinessService | null>();
   const [logistics, setLogistics] = React.useState<LogisticsType>('appjusto');
   const [isAgreed, setIsAgreed] = React.useState(false);
   // helpers
@@ -161,9 +150,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
       );
       if (logisticsService) {
         setLogistics('appjusto');
-        setLogisticsAccepted(logisticsService);
       } else {
-        setLogisticsAccepted(null);
         setLogistics('private');
       }
     }
@@ -181,27 +168,8 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
         title={t('Plano de contratação')}
         subtitle={t('Escolha o plano do seu restaurante.')}
       />
-
-      {logisticsAccepted && (
-        <Flex
-          mt="4"
-          p="4"
-          flexDir="row"
-          border="1px solid #C8D7CB"
-          borderRadius="lg"
-          maxW="468px"
-        >
-          <Center>
-            <Icon as={MdInfo} w="24px" h="24px" />
-          </Center>
-        </Flex>
-      )}
       <form onSubmit={onSubmitHandler}>
-        <LogisticsOptions
-          logistics={logistics}
-          logisticsAccepted={logisticsAccepted}
-          handleChange={setLogistics}
-        />
+        <LogisticsOptions logistics={logistics} handleChange={setLogistics} />
         <Flex
           mt="4"
           px="4"
@@ -217,7 +185,12 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
           >
             <Text>
               {t('Li e estou de acordo com os ')}
-              <Link href="" fontWeight="700" textDecor="underline">
+              <Link
+                href="https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md"
+                target="_blank"
+                fontWeight="700"
+                textDecor="underline"
+              >
                 {t('termos do plano selecionado')}
               </Link>
             </Text>

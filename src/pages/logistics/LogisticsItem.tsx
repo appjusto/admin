@@ -1,5 +1,5 @@
 import { Box, Center, Flex, Icon, Text } from '@chakra-ui/react';
-import { MdCheck } from 'react-icons/md';
+import { MdCheck, MdClose } from 'react-icons/md';
 
 interface LogisticsItemProps {
   title: string;
@@ -13,11 +13,11 @@ export const LogisticsItem = ({
   isDisabled,
 }: LogisticsItemProps) => {
   return (
-    <Flex mt="6">
+    <Flex mt="3">
       <Box minW="24px">
         <Center>
           <Icon
-            as={MdCheck}
+            as={isDisabled ? MdClose : MdCheck}
             color={iconDisabled || isDisabled ? 'gray.500' : 'green.600'}
             w="24px"
             h="24px"

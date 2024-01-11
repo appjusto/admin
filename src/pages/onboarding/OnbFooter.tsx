@@ -11,7 +11,7 @@ const OnbFooter = () => {
       w="100%"
       minH="106px"
       bg="black"
-      zIndex="9999"
+      zIndex="100"
     >
       <Container py="10">
         <Flex
@@ -26,8 +26,8 @@ const OnbFooter = () => {
             fontWeight="500"
           >
             <Link
-              as={RouterLink}
-              to="/"
+              href="https://github.com/appjusto/docs/blob/main/legal/politica-de-privacidade.md"
+              target="_blank"
               maxW="170px"
               textDecor="underline"
               _hover={{ color: 'gray.400' }}
@@ -35,8 +35,8 @@ const OnbFooter = () => {
               Política de privacidade
             </Link>
             <Link
-              as={RouterLink}
-              to="/"
+              href="https://github.com/appjusto/docs/blob/main/legal/termos-de-uso-restaurantes.md"
+              target="_blank"
               maxW="120px"
               textDecor="underline"
               _hover={{ color: 'gray.400' }}
