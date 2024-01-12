@@ -7,7 +7,7 @@ export const Social = () => {
     <Box color="black">
       <HStack mt="12" spacing={2}>
         <Text fontSize="xl" lineHeight="30px" fontWeight="700">
-          {t('Aproveite para seguir o AppJusto nas redes sociais')}
+          {t('Aproveite para seguir o appjusto nas redes sociais')}
         </Text>
         <Link
           href="https://www.instagram.com/appjusto/"

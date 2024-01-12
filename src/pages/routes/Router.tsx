@@ -38,7 +38,7 @@ const isDesktopApp = isElectron();
 export const Router = () => {
   React.useEffect(() => {
     if (!isDesktopApp) return;
-    document.title = 'AppJusto | Restaurantes';
+    document.title = 'appjusto | restaurantes';
   }, []);
   return (
     <MainErrorBoundary>

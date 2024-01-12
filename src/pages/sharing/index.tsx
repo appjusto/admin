@@ -130,7 +130,7 @@ const SharingPage = () => {
               fontWeight="500"
             >
               {t(
-                'Caso o cliente tenha o aplicativo do AppJusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção do link selecionado.'
+                'Caso o cliente tenha o aplicativo do appjusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção do link selecionado.'
               )}
             </Text>
           </Stack>

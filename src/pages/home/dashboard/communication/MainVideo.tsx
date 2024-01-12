@@ -24,7 +24,7 @@ export const MainVideo = () => {
       <Box mt="6" w="full" borderRadius="lg" overflow="hidden">
         <AspectRatio ratio={9 / 5}>
           <iframe
-            title="AppJusto é o app de delivery bom pra todos"
+            title="appjusto é o app de delivery bom pra todos"
             src="https://www.youtube.com/embed/BaEiVN7OZWE"
             onPlay={() =>
               analyticsLogEvent({ eventName: 'admin_main_video_play' })

@@ -77,7 +77,7 @@ const BODashboard = () => {
   };
   // side effects
   React.useEffect(() => {
-    document.title = 'AppJusto | Backoffice';
+    document.title = 'appjusto | backoffice';
   }, []);
   React.useEffect(() => {
     const { date, time } = getDateTime();

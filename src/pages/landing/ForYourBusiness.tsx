@@ -12,7 +12,12 @@ interface TopicProps extends BoxProps {
 
 const Topic = ({ title, description, ...props }: TopicProps) => {
   return (
-    <Stack mt="4" direction={{ base: 'column', md: 'row' }} spacing={4} {...props}>
+    <Stack
+      mt="4"
+      direction={{ base: 'column', md: 'row' }}
+      spacing={4}
+      {...props}
+    >
       <Box minW="24px" textAlign="start">
         <Image src={check} width="24px" height="48px" />
       </Box>
@@ -20,7 +25,10 @@ const Topic = ({ title, description, ...props }: TopicProps) => {
         <Heading as="h2" fontSize="2xl" fontWeight="700" lineHeight="3xl">
           {title}
         </Heading>
-        <Text fontSize={{ base: 'md', md: 'lg' }} lineHeight={{ base: '22px', md: '26px' }}>
+        <Text
+          fontSize={{ base: 'md', md: 'lg' }}
+          lineHeight={{ base: '22px', md: '26px' }}
+        >
           {description}
         </Text>
       </Box>
@@ -48,7 +56,7 @@ export const ForYourBusiness = () => {
           <Topic
             title={t('Acesso aos clientes')}
             description={t(
-              'Pelo AppJusto os restaurantes voltam a ter acesso aos clientes, com dados como nome, endereço e telefone, sendo disponibilizados sempre que permitirem.'
+              'Pelo appjusto os restaurantes voltam a ter acesso aos clientes, com dados como nome, endereço e telefone, sendo disponibilizados sempre que permitirem.'
             )}
           />
           <Topic

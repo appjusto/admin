@@ -15,7 +15,7 @@ export const CalculatorCall = () => {
             <SectionHeading>{t('Calcule seus ganhos')}</SectionHeading>
             <Text mb="6" fontSize="18px" lineHeight="26px" fontWeight="500">
               {t(
-                'O AppJusto criou uma calculadora para auxiliar o seu restaurante a saber quanto irá economizar utilizando a nossa plataforma.'
+                'O appjusto criou uma calculadora para auxiliar o seu restaurante a saber quanto irá economizar utilizando a nossa plataforma.'
               )}
             </Text>
             <CustomButton

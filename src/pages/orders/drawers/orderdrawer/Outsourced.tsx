@@ -92,7 +92,7 @@ export const Outsourced = ({ order, canOutsource }: OutsourcedProps) => {
             </SectionTitle>
             <Text mt="2">
               {t(
-                'Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede fará a retirada. A equipe AppJusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.'
+                'Não foi possível encontrar entregadores disponíveis na nossa rede. Um entregador de outra rede fará a retirada. A equipe appjusto está monitorando o pedido e concluirá o mesmo após a realização da entrega.'
               )}
             </Text>
             <Text mt="4">
@@ -112,7 +112,7 @@ export const Outsourced = ({ order, canOutsource }: OutsourcedProps) => {
         <SectionTitle mt="0">{t('Você pode assumir a logística')}</SectionTitle>
         <Text mt="2">
           {t(
-            `Ao assumir a logística, iremos repassar o valor de ${deliveryFee} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. Caso confirme, o AppJusto não terá como monitorar a entrega.`
+            `Ao assumir a logística, iremos repassar o valor de ${deliveryFee} pelo custo da entrega, além do valor do pedido que já foi cobrado do cliente. Caso confirme, o appjusto não terá como monitorar a entrega.`
           )}
         </Text>
         <HStack mt="4">

@@ -1,9 +1,8 @@
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button, Image, Text } from '@chakra-ui/react';
 import Container from 'common/components/Container';
 import logo from 'common/img/logo.svg';
 import { Link } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import Image from '../../common/components/Image';
 import { Checklist } from './checklist/Checklist';
 import hands from './img/package-hands.svg';
 import OnbFooter from './OnbFooter';
@@ -27,7 +26,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
         <Image src={hands} />
       </Box>
       <Container minH="100vh" zIndex="10">
-        <Image src={logo} mb="8" />
+        <Image src={logo} ml="-1" mb="8" w="104px" />
         <Box color="black">
           <Text fontSize="2xl" mb="4">
             {t('Olá! 👋')}
@@ -49,7 +48,7 @@ const OnboardingOpening = ({ path }: OpeningProps) => {
         </Box>
         <Text fontSize="md" mb="8">
           {
-            'Ao final desse processo, a equipe do AppJusto estará pronta para te ajudar a concluir o seu cadastro. Vamos começar?'
+            'Ao final desse processo, a equipe do appjusto estará pronta para te ajudar a concluir o seu cadastro. Vamos começar?'
           }
         </Text>
         <Link to={`${path}/1`}>

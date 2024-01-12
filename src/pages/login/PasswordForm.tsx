@@ -88,7 +88,7 @@ export const PasswordForm = ({
         )}
 
         <Text mt="6" textAlign="center" fontSize="xs">
-          {t('Sou novo no AppJusto e ')}
+          {t('Sou novo no appjusto e ')}
           {!isDesktopApp ? (
             <Text
               as="span"

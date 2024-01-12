@@ -1,7 +1,7 @@
 import { Order, OrderItem, WithId } from '@appjusto/types';
 import { Box, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
-import logoAppjusto from 'common/img/logo-black.svg';
+import logoAppjusto from 'common/img/logo.svg';
 import { getOrderDestinationNeighborhood } from 'pages/orders/utils';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
@@ -99,7 +99,7 @@ export const OrderToPrinting = React.forwardRef<
           <Box maxW="60px">
             <Image src={logo ?? ''} />
           </Box>
-          <Box maxW="80px">
+          <Box maxW="60px">
             <Image src={logoAppjusto} />
           </Box>
         </HStack>

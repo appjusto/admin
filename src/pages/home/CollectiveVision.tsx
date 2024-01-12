@@ -103,7 +103,7 @@ export const CollectiveVision = (props: BoxProps) => {
         </Text>
         <Text mt="4">
           {t(
-            'ii) Fazer parte da comunidade de forma ativa, retribuindo a gentileza dos restaurantes pelo uso das instalações (banheiro, água, energia para carregamento de celulares) ao demonstrar educação e profissionalismo com a manutenção das condições de limpeza encontradas nos locais utilizados, além de também apoiar o crescimento da plataforma ao divulgar o AppJusto para mais restaurantes e outros entregadores.'
+            'ii) Fazer parte da comunidade de forma ativa, retribuindo a gentileza dos restaurantes pelo uso das instalações (banheiro, água, energia para carregamento de celulares) ao demonstrar educação e profissionalismo com a manutenção das condições de limpeza encontradas nos locais utilizados, além de também apoiar o crescimento da plataforma ao divulgar o appjusto para mais restaurantes e outros entregadores.'
           )}
         </Text>
       </Box>

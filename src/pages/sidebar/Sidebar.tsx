@@ -40,7 +40,7 @@ const Sidebar = () => {
           {isBackOffice ? (
             <Flex mt="6" px="4">
               <Box>
-                <Image src={appjustoLogo} height="40px" />
+                <Image src={appjustoLogo} height="36px" />
               </Box>
             </Flex>
           ) : (
@@ -73,7 +73,7 @@ const Sidebar = () => {
                 )}
               </Center>
               <Box>
-                <Image src={appjustoLogo} height="36px" />
+                <Image src={appjustoLogo} height="28px" />
               </Box>
             </Flex>
           )}

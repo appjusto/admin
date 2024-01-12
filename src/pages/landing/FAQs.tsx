@@ -20,7 +20,9 @@ export const FAQs = () => {
         <Content>
           <SectionHeading>{t('Perguntas frequentes')}</SectionHeading>
           <Text mb="2" color="black">
-            {t('Tire suas dúvidas sobre o AppJusto e faça parte desse movimento:')}
+            {t(
+              'Tire suas dúvidas sobre o appjusto e faça parte desse movimento:'
+            )}
           </Text>
           <Accordion defaultIndex={[0]} allowMultiple w="100%">
             <AccordionItem>

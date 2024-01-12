@@ -11,7 +11,7 @@ export const OutsideAreaPage = () => {
       </Text>
       <Text mt="4" fontSize="lg">
         {t(
-          'O AppJusto conta com o apoio dos restaurantes e entregadores para divulgarem para seus conhecidos se cadastrarem no app quanto antes tivermos um equilíbrio da rede na sua região mais rápido vamos iniciar as operações.'
+          'O appjusto conta com o apoio dos restaurantes e entregadores para divulgarem para seus conhecidos se cadastrarem no app quanto antes tivermos um equilíbrio da rede na sua região mais rápido vamos iniciar as operações.'
         )}
       </Text>
       <Text mt="6" fontSize="lg">

@@ -61,7 +61,7 @@ const InactiveAppVersionPage = () => {
           fontWeight="700"
           textAlign="center"
         >
-          {t('Sua versão do AppJusto Admin está desatualizada')}
+          {t('Sua versão do appjusto admin está desatualizada')}
         </Text>
         <Text
           mt="4"

@@ -82,7 +82,7 @@ const Login = () => {
             <Text>{t('Voltar')}</Text>
           </HStack>
         )}
-        <Image src={logo} scrollCheck={false} mb="8" />
+        <Image src={logo} scrollCheck={false} mb="8" w="104px" />
         {signInStep === 'email' && (
           <EmailForm
             email={email}

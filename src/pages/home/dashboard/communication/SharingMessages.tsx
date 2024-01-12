@@ -34,14 +34,14 @@ export const SharingMessages = () => {
           <MessageCard
             title={t('Você conhece o AppJusto?')}
             body={t(
-              'O AppJusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
+              'O appjusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
             )}
             notifySelected={(msg) => setSelected(msg)}
           />
           <MessageCard
             title={t('Você conhece o AppJusto?')}
             body={t(
-              'O AppJusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
+              'O appjusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
             )}
             notifySelected={(msg) => setSelected(msg)}
           />

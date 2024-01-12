@@ -279,7 +279,7 @@ const InvoiceDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     >
                       {t('Nome:')}{' '}
                       <Text as="span" fontWeight="500">
-                        {'Appjusto (Logística fora da rede)'}
+                        {'appjusto (Logística fora da rede)'}
                       </Text>
                     </Text>
                   ) : (

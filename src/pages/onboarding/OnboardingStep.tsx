@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Flex, FlexProps, Icon, Tooltip } from '@chakra-ui/react';
-import { ReactComponent as Logo } from 'common/img/logo.svg';
+import { Box, Flex, FlexProps, Icon, Image, Tooltip } from '@chakra-ui/react';
+import logo from 'common/img/logo.svg';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { t } from 'utils/i18n';
 import { Checklist } from './checklist/Checklist';
@@ -44,7 +44,7 @@ const OnboardingStep = ({ children }: Props) => {
               </Tooltip>
             </Link>
           )}
-          <Logo />
+          <Image src={logo} ml="-1" w="104px" />
           <Checklist mt="8" currentStepIndex={currentStepIndex} />
         </Box>
         <Box

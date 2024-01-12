@@ -35,7 +35,7 @@ export const Operation1 = () => {
       <OperationStep
         icon={monitor}
         title={t(
-          'Baixe e ative a extensão do AppJusto Restaurantes para o Google Chrome'
+          'Baixe e ative a extensão do appjusto restaurantes para o Google Chrome'
         )}
         description={t(
           'Facilita o uso do painel e garante que a campainha avise sobre novos pedidos'
