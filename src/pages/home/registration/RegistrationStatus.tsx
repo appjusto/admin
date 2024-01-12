@@ -14,6 +14,7 @@ import { useBusinessProfileValidation } from 'app/api/business/profile/useBusine
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertWarning } from 'common/components/AlertWarning';
 import React from 'react';
+import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { OutsideAreaPage } from './OutsideAreaPage';
 import { RegistrationItem } from './RegistrationItem';
@@ -60,9 +61,9 @@ const initialState = [
   {
     status: false,
     type: 'logistics',
-    label: 'Modelo de entrega',
-    link: 'logistics',
-    helpText: 'Dúvidas sobre modelo de entrega',
+    label: 'Entrega própria',
+    link: 'fleet',
+    helpText: 'Dúvidas sobre como definir sua entrega',
     helpLink:
       'https://appjusto.freshdesk.com/support/solutions/articles/67000718105-d%C3%BAvidas-sobre-modelo-de-entrega',
   },
@@ -101,9 +102,18 @@ export const RegistrationStatus = () => {
   const [isOusideArea, setIsOusideArea] = React.useState<boolean>();
   const [isMenuModalOpen, setIsMenuModalOpen] = React.useState<boolean>(false);
   // helpers
-  const isValid =
-    validation.filter((data) => data.status === false).length === 0;
-  const pendencies = validation.filter((item) => item.status === false).length;
+  const isValid = React.useMemo(
+    () => validation.filter((data) => data.status === false).length === 0,
+    [validation]
+  );
+  const pendencies = React.useMemo(
+    () => validation.filter((item) => item.status === false).length,
+    [validation]
+  );
+  const isLogistics = React.useMemo(
+    () => getBusinessService(business?.services, 'logistics') !== undefined,
+    [business?.services]
+  );
   // handlers
   const handleSubmitRegistration = () => {
     if (isValid) {
@@ -193,6 +203,9 @@ export const RegistrationStatus = () => {
           )}
           <VStack mt="6" spacing={4} alignItems="flex-start">
             {validation.map((data) => {
+              if (isLogistics && data.type === 'logistics') {
+                return <></>;
+              }
               return (
                 <RegistrationItem
                   key={data.type}

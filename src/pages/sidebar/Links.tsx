@@ -1,6 +1,8 @@
 import { Box, BoxProps, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
+import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
+import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { LinkItem } from './LinkItem';
 import { OrdersLinkItem } from './OrdersLinkItem';
@@ -11,6 +13,10 @@ export const Links = (props: BoxProps) => {
   const { url } = useRouteMatch();
   // helpers
   const isBusinessPending = business?.situation !== 'approved';
+  const isLogistics = React.useMemo(
+    () => getBusinessService(business?.services, 'logistics') !== undefined,
+    [business?.services]
+  );
   // UI
   return (
     <Box {...props}>
@@ -49,6 +55,9 @@ export const Links = (props: BoxProps) => {
           label={t('Dados bancários')}
         />
         <LinkItem to={`${url}/logistics`} label={t('Plano')} />
+        {!isLogistics ? (
+          <LinkItem to={`${url}/fleet`} label={t('Entrega')} />
+        ) : null}
         <LinkItem to={`${url}/integrations`} label={t('Integrações')} />
       </Box>
     </Box>

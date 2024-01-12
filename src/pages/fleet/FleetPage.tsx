@@ -18,8 +18,9 @@ const FleetPage = () => {
     return !logisticsService && businessFleet === null;
   }, [business?.services, businessFleet]);
 
-  const showFleetPendingAlert =
-    isFleetPending && business?.situation === 'approved';
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <Box>
@@ -27,7 +28,7 @@ const FleetPage = () => {
         title={t('Configure sua entrega')}
         subtitle={t('Defina os parâmetros da sua entrega própria.')}
       />
-      {showFleetPendingAlert && (
+      {isFleetPending && (
         <Flex
           mt="4"
           p="4"
@@ -46,11 +47,8 @@ const FleetPage = () => {
             </Text>
             <Text fontSize="13px">
               {t(
-                'Para ativa-la é preciso configurar a sua entrega, na aba abaixo. Enquando isso, seus pedidos continuarão com a '
+                'Para ativa-la é preciso configurar a sua entrega, na seção abaixo.'
               )}
-              <Text as="span" fontWeight="700">
-                {t('entrega AppJusto.')}
-              </Text>
             </Text>
           </Box>
         </Flex>
