@@ -66,7 +66,7 @@ const LogisticsPage = ({ onboarding, redirect }: OnboardingProps) => {
         requestId: 'logistics-page-error',
         message: {
           title:
-            'Apenas donos e gerentes de restaurantes podem ativar ou desativar a entrega AppJusto.',
+            'Apenas donos e gerentes de restaurantes podem ativar ou desativar a entrega appjusto.',
         },
       });
     if (!isAgreed)

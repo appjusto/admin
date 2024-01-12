@@ -14,7 +14,7 @@ export const Transparency = () => {
             <SectionHeading>{t('Nosso preço é justo')}</SectionHeading>
             <Text mb="6" fontSize="18px" lineHeight="26px" fontWeight="500">
               {t(
-                'Compare as taxas cobradas e entenda por que você ganha mais ao usar o AppJusto:'
+                'Compare as taxas cobradas e entenda por que você ganha mais ao usar o appjusto:'
               )}
             </Text>
             <Flex flexDir={{ base: 'column', xl: 'row' }}>

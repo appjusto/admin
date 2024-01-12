@@ -34,7 +34,11 @@ const HeroTopic = ({ title, ps, ...props }: HeroTopicProps) => {
 
 export const Hero = () => {
   return (
-    <Section h={{ base: '600px', md: '840px', lg: '720px' }} bg="black" overflow="hidden">
+    <Section
+      h={{ base: '600px', md: '840px', lg: '720px' }}
+      bg="black"
+      overflow="hidden"
+    >
       <Container zIndex="100">
         <Content mt="32">
           <Flex flexDir="column">
@@ -46,7 +50,7 @@ export const Hero = () => {
               fontWeight="700"
               lineHeight={{ base: '38.4px', md: '57.6px' }}
             >
-              {t('Ganhe mais com seu restaurante no AppJusto')}
+              {t('Ganhe mais com seu restaurante no appjusto')}
             </Heading>
             <HeroTopic mt="4" title={t('Menores taxas do mercado')} />
             <HeroTopic title={t('Exibição igualitária')} />

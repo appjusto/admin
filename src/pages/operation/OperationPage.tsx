@@ -275,7 +275,7 @@ const OperationPage = () => {
           </Text>
           <Text mt="2" fontSize="md">
             {t(
-              'Defina se o seu restaurante estará visível, ou não, para os consumidores do AppJusto'
+              'Defina se o seu restaurante estará visível, ou não, para os consumidores do appjusto'
             )}
           </Text>
           <Flex mt="4" pb="8" alignItems="center">

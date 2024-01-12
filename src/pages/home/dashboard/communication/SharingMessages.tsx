@@ -32,14 +32,14 @@ export const SharingMessages = () => {
       <Box mt="6" w="100%" pb="2" overflow="auto">
         <HStack minW={{ lg: '1374px' }} spacing={4}>
           <MessageCard
-            title={t('Você conhece o AppJusto?')}
+            title={t('Você conhece o appjusto?')}
             body={t(
               'O appjusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
             )}
             notifySelected={(msg) => setSelected(msg)}
           />
           <MessageCard
-            title={t('Você conhece o AppJusto?')}
+            title={t('Você conhece o appjusto?')}
             body={t(
               'O appjusto é uma plataforma que oferece regras e taxas justas para entregadores e restaurantes. Com o compromisso de ganhar apenas o mínimo necessário para se manter, a plataforma permite que os consumidores economizem enquanto entregadores e restaurantes ganham mais 💚👊'
             )}

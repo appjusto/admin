@@ -29,7 +29,7 @@ export const FAQs = () => {
               <h2>
                 <AccordionButton>
                   <Box flex="1" textAlign="left" color="black">
-                    {t('Como surgiu a ideia de criar o AppJusto?')}
+                    {t('Como surgiu a ideia de criar o appjusto?')}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -44,7 +44,7 @@ export const FAQs = () => {
               <h2>
                 <AccordionButton>
                   <Box flex="1" textAlign="left" color="black">
-                    {t('Como surgiu a ideia de criar o AppJusto?')}
+                    {t('Como surgiu a ideia de criar o appjusto?')}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -59,7 +59,7 @@ export const FAQs = () => {
               <h2>
                 <AccordionButton>
                   <Box flex="1" textAlign="left" color="black">
-                    {t('Como surgiu a ideia de criar o AppJusto?')}
+                    {t('Como surgiu a ideia de criar o appjusto?')}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>

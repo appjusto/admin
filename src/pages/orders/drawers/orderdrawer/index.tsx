@@ -209,7 +209,7 @@ export const OrderDrawer = (props: Props) => {
               )}
               {insuranceAmount > 0 && (
                 <>
-                  <SectionTitle>{t('Cobertura AppJusto')}</SectionTitle>
+                  <SectionTitle>{t('Cobertura appjusto')}</SectionTitle>
                   <Text mt="1" fontSize="md" fontWeight="700" color="black">
                     {t('Valor ressarcido:')}{' '}
                     <Text as="span" fontWeight="500">

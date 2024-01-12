@@ -20,7 +20,7 @@ const ShareButton: React.FC<ButtonProps> = ({ ...props }) => {
       }
       {...props}
     >
-      {t('Divulgar o AppJusto')}
+      {t('Divulgar o appjusto')}
     </Button>
   );
 };

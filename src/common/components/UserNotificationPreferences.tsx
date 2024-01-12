@@ -54,7 +54,7 @@ export const UserNotificationPreferences = ({
           </Checkbox>
           <Text fontSize="13px">
             {t(
-              'Para conhecer mais sobre o AppJusto: propósito, impacto, crescimento, financiamento e mais.'
+              'Para conhecer mais sobre o appjusto: propósito, impacto, crescimento, financiamento e mais.'
             )}
           </Text>
         </Box>

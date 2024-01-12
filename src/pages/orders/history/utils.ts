@@ -74,7 +74,7 @@ const headers = [
   { label: 'Status', key: 'status' },
   { label: 'Valor do pedido', key: 'value' },
   { label: 'Taxa financeira', key: 'iugu' },
-  { label: 'Comissão (AppJusto)', key: 'appjusto' },
+  { label: 'Comissão (appjusto)', key: 'appjusto' },
   { label: 'Extras', key: 'extras' },
   { label: 'Valor líquido', key: 'netValue' },
   { label: 'Método de pagamento', key: 'paymentMethod' },

@@ -67,7 +67,7 @@ export const Header = () => {
               >
                 <Image
                   src={logo}
-                  alt="Logo AppJusto"
+                  alt="Logo appjusto"
                   width="100%"
                   loading="eager"
                 />
@@ -97,7 +97,7 @@ export const Header = () => {
               href="https://appjusto.freshdesk.com/support/home"
               isExternal
             >
-              {t('Tirar dúvidas sobre o AppJusto')}
+              {t('Tirar dúvidas sobre o appjusto')}
             </Link>
             <Link as={RouterLink} _focus={{ outline: 'none' }} to="/app">
               <Button
@@ -155,7 +155,7 @@ export const Header = () => {
               href="https://appjusto.freshdesk.com/support/home"
               isExternal
             >
-              {t('Tirar dúvidas sobre o AppJusto')}
+              {t('Tirar dúvidas sobre o appjusto')}
             </Link>
             <HStack spacing={8}>
               <Link

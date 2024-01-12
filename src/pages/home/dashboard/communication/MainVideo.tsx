@@ -16,7 +16,7 @@ export const MainVideo = () => {
           <Text as="span" fontWeight="semibold">
             {t('história e motivação')}
           </Text>
-          {t(' com o Rog, co-fundador do AppJusto')}
+          {t(' com o Rog, co-fundador do appjusto')}
         </Text>
       }
       defaultIndex={[0]}

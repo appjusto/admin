@@ -94,7 +94,7 @@ export const DeeplinkCard = () => {
           </Center>
           <Box ml="4" maxW="554px">
             <Text fontWeight="semibold">
-              {t('Compartilhe o link do seu restaurante no AppJusto')}
+              {t('Compartilhe o link do seu restaurante no appjusto')}
             </Text>
             <Text>
               {t(
@@ -151,7 +151,7 @@ export const DeeplinkCard = () => {
         </Center>
         <Box ml="4" maxW="554px">
           <Text fontWeight="semibold">
-            {t('Crie e compartilhe o link do seu restaurante no AppJusto')}
+            {t('Crie e compartilhe o link do seu restaurante no appjusto')}
           </Text>
           <Text>
             {t('Edite o final do link abaixo e gere o link do seu cardápio')}

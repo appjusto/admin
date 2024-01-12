@@ -9,7 +9,7 @@ export const SupportMaterials = () => {
         'Divulgue seu restaurante e potencialize suas vendas com materiais de apoio'
       )}
       description={t(
-        'Nossos materiais irão te auxiliar a ter mais vendas com o AppJusto.'
+        'Nossos materiais irão te auxiliar a ter mais vendas com o appjusto.'
       )}
     >
       <OperationStep

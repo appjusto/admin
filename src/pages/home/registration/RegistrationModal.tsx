@@ -22,12 +22,12 @@ export const RegistrationModal = ({
       size="2xl"
       isOpen={isOpen}
       onClose={onClose}
-      title={t('Importação do cardápio para o AppJusto')}
+      title={t('Importação do cardápio para o appjusto')}
     >
       <Box mt="-2" mb="4">
         <Text>
           {t(
-            'Caso você possua um cardápio cadastrado em outra plataforma, nosso suporte pode verificar a viabilidade de realizar a sua importação para o AppJusto.'
+            'Caso você possua um cardápio cadastrado em outra plataforma, nosso suporte pode verificar a viabilidade de realizar a sua importação para o appjusto.'
           )}
         </Text>
         <Box

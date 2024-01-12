@@ -25,7 +25,7 @@ export const OrderIncidentsTable = ({
   // helpers
   const getParticipant = (type: string) => {
     let participant = 'N/E';
-    if (type.includes('agent')) participant = 'Agente Appjusto';
+    if (type.includes('agent')) participant = 'Agente appjusto';
     if (type.includes('courier')) participant = 'Entregador';
     if (type.includes('restaurant')) participant = 'Restaurante';
     if (type.includes('consumer')) participant = 'Cliente';

@@ -109,7 +109,7 @@ export const LinkBoxWithOption = ({
                 lineHeight="22px"
                 fontWeight="500"
               >
-                {t('Botão para AppJusto')}
+                {t('Botão para appjusto')}
               </Text>
               <Text
                 fontSize="15px"

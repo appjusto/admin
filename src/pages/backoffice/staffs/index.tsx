@@ -35,7 +35,7 @@ const StaffsPage = () => {
   return (
     <>
       <PageHeader
-        title={t('Agentes Appjusto')}
+        title={t('Agentes appjusto')}
         subtitle={t(`Atualizado ${dateTime}`)}
       />
       <Flex mt="8">

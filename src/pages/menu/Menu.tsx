@@ -148,7 +148,7 @@ const Menu = () => {
                 fontWeight="500"
               >
                 {t(
-                  'Para gerenciar o seu cardápio pelo AppJusto, vá até a tela de '
+                  'Para gerenciar o seu cardápio pelo appjusto, vá até a tela de '
                 )}
                 <Link
                   as={RouterLink}
@@ -157,7 +157,7 @@ const Menu = () => {
                 >
                   {t('integrações')}
                 </Link>
-                {t(' e selecione a opção "Usar cardápio do AppJusto".')}
+                {t(' e selecione a opção "Usar cardápio do appjusto".')}
               </Text>
             </Box>
           </Flex>

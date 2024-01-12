@@ -365,7 +365,7 @@ export const ManagerProfile = ({ onboarding, redirect }: OnboardingProps) => {
             <SectionTitle>{t('Preferências de notificação')}</SectionTitle>
             <Text mt="1" fontSize="sm" maxW="580px">
               {t(
-                'Você pode escolher os tipos de comunicações que deseja receber do AppJusto.'
+                'Você pode escolher os tipos de comunicações que deseja receber do appjusto.'
               )}
             </Text>
             <UserNotificationPreferences

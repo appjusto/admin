@@ -12,7 +12,7 @@ export const Social = () => {
         <Link
           href="https://www.instagram.com/appjusto/"
           isExternal
-          aria-label="Link para a página do Instagram do Appjusto"
+          aria-label="Link para a página do Instagram do appjusto"
           _hover={{ color: 'green.500' }}
           _focus={{ outline: 'none' }}
         >
@@ -21,7 +21,7 @@ export const Social = () => {
         <Link
           href="https://www.facebook.com/appjusto"
           isExternal
-          aria-label="Link para a página do Facebook do Appjusto"
+          aria-label="Link para a página do Facebook do appjusto"
           _hover={{ color: 'green.500' }}
           _focus={{ outline: 'none' }}
         >
@@ -30,7 +30,7 @@ export const Social = () => {
         <Link
           href="https://www.linkedin.com/company/appjusto/"
           isExternal
-          aria-label="Link para a página do Linkedin do Appjusto"
+          aria-label="Link para a página do Linkedin do appjusto"
           _hover={{ color: 'green.500' }}
           _focus={{ outline: 'none' }}
         >

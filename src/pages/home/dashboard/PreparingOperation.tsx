@@ -13,7 +13,7 @@ export const PreparingOperation = () => {
   return (
     <Box mt="6">
       <Text fontSize="4xl" color="black">
-        {t('Boas-vindas ao AppJusto')}
+        {t('Boas-vindas ao appjusto')}
       </Text>
       <Text>
         {t(

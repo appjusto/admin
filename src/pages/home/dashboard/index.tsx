@@ -86,7 +86,7 @@ const Dashboard = () => {
         >
           {t('Termos de uso')}
         </Link>
-        <Text fontSize="15px">© {new Date().getFullYear()} AppJusto</Text>
+        <Text fontSize="15px">© {new Date().getFullYear()} appjusto</Text>
       </Stack>
     </>
   );

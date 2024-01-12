@@ -1,15 +1,26 @@
 import { Stack } from '@chakra-ui/react';
-import { FaFacebookSquare, FaLinkedin, FaTwitterSquare, FaWhatsappSquare } from 'react-icons/fa';
+import {
+  FaFacebookSquare,
+  FaLinkedin,
+  FaTwitterSquare,
+  FaWhatsappSquare,
+} from 'react-icons/fa';
 import ShareLink from './ShareLink';
 
 const mainUrl = 'https://appjusto.com.br/';
 const sharingMsg = encodeURIComponent(
-  `AppJusto. Mais do que um app de entregas. Somo um movimento por relações mais justas e transparentes. Faça parte agora!\n\n${mainUrl}`
+  `Appjusto. Mais do que um app de entregas. Somo um movimento por relações mais justas e transparentes. Faça parte agora!\n\n${mainUrl}`
 );
 
 const SharingBar: React.FC = () => {
   return (
-    <Stack w="100%" maxW="560px" direction={{ base: 'column', lg: 'row' }} spacing={4} mt="6px">
+    <Stack
+      w="100%"
+      maxW="560px"
+      direction={{ base: 'column', lg: 'row' }}
+      spacing={4}
+      mt="6px"
+    >
       <Stack w="100%" direction="row" spacing={4}>
         <ShareLink
           link={`https://api.whatsapp.com/send?text=${sharingMsg}`}

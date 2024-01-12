@@ -67,7 +67,7 @@ const DeletedPage = () => {
               textAlign="center"
             >
               {t(
-                'Lamentamos que você tenha excluido o seu restaurante do AppJusto. Nosso objetivo é ser uma alternativa de delivery mais justa para todos.'
+                'Lamentamos que você tenha excluido o seu restaurante do appjusto. Nosso objetivo é ser uma alternativa de delivery mais justa para todos.'
               )}{' '}
               {businessesIsEmpty && (
                 <Text as="span">
@@ -102,7 +102,7 @@ const DeletedPage = () => {
               <Image src={logo} w="96px" />
             </Flex>
             <Link as={RouterLink} to="/logout" textDecor="underline">
-              {t('Ir para a página inicial do AppJusto')}
+              {t('Ir para a página inicial do appjusto')}
             </Link>
           </Box>
           <Box mt="6">
@@ -122,7 +122,7 @@ const DeletedPage = () => {
               fontWeight="500"
               textAlign="center"
             >
-              {t('Para falar com o AppJusto, mande um e-mail para')}{' '}
+              {t('Para falar com o appjusto, mande um e-mail para')}{' '}
               <Link
                 fontWeight="700"
                 textDecor="underline"

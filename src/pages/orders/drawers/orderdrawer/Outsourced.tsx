@@ -88,7 +88,7 @@ export const Outsourced = ({ order, canOutsource }: OutsourcedProps) => {
         ) : (
           <>
             <SectionTitle mt="0">
-              {t('Logística fora da rede AppJusto')}
+              {t('Logística fora da rede appjusto')}
             </SectionTitle>
             <Text mt="2">
               {t(

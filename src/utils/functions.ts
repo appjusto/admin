@@ -366,7 +366,7 @@ export const getOrderCancellator = (issueIype?: string) => {
   if (issueIype?.includes('business')) cancelator = 'Restaurante';
   if (issueIype?.includes('consumer')) cancelator = 'Cliente';
   if (issueIype?.includes('courier')) cancelator = 'Entregador';
-  if (issueIype?.includes('agent')) cancelator = 'Agente Appjusto';
+  if (issueIype?.includes('agent')) cancelator = 'Agente appjusto';
   return cancelator;
 };
 

@@ -39,7 +39,13 @@ export const LandingPageFooter = () => {
               mb={['22px', null, null, '0']}
               mr={['0', null, null, '26px']}
             >
-              <Icon as={MdMailOutline} color="green.500" mr="12px" w="20px" h="20px" />
+              <Icon
+                as={MdMailOutline}
+                color="green.500"
+                mr="12px"
+                w="20px"
+                h="20px"
+              />
               <Link
                 href="mailto:contato@appjusto.com.br"
                 color="white"
@@ -61,7 +67,7 @@ export const LandingPageFooter = () => {
                 isExternal
                 mr="28px"
                 color="green.500"
-                aria-label="Link para a página do Linkedin do Appjusto"
+                aria-label="Link para a página do Linkedin do appjusto"
                 _hover={{ color: '#055AFF' }}
                 _focus={{ outline: 'none' }}
               >
@@ -72,7 +78,7 @@ export const LandingPageFooter = () => {
                 isExternal
                 mr="28px"
                 color="green.500"
-                aria-label="Link para a página do Facebook do Appjusto"
+                aria-label="Link para a página do Facebook do appjusto"
                 _hover={{ color: '#055AFF' }}
                 _focus={{ outline: 'none' }}
               >
@@ -83,7 +89,7 @@ export const LandingPageFooter = () => {
                 isExternal
                 mr="28px"
                 color="green.500"
-                aria-label="Link para a página do Instagram do Appjusto"
+                aria-label="Link para a página do Instagram do appjusto"
                 _hover={{ color: '#055AFF' }}
                 _focus={{ outline: 'none' }}
               >
@@ -125,7 +131,7 @@ export const LandingPageFooter = () => {
               {t('Termos de uso')}
             </Link>
             <Text mb={['22px', null, null, '0']} fontSize="15px">
-              © {new Date().getFullYear()} AppJusto. {t('Marca Registrada')}.
+              © {new Date().getFullYear()} appjusto. {t('Marca Registrada')}.
             </Text>
           </Flex>
         </Flex>

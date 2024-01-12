@@ -1,5 +1,15 @@
 import { OrderIssue, WithId } from '@appjusto/types';
-import { Box, HStack, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  HStack,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { getDateAndHour } from 'utils/functions';
@@ -12,7 +22,7 @@ export const OrderIssuesTable = ({ issues }: OrderIssuesTableProps) => {
   // helpers
   const getParticipant = (type: string) => {
     let participant = 'N/E';
-    if (type.includes('agent')) participant = 'Agente Appjusto';
+    if (type.includes('agent')) participant = 'Agente appjusto';
     if (type.includes('courier')) participant = 'Entregador';
     if (type.includes('restaurant')) participant = 'Restaurante';
     if (type.includes('consumer')) participant = 'Cliente';
@@ -60,7 +70,9 @@ export const OrderIssuesTable = ({ issues }: OrderIssuesTableProps) => {
               ))
             ) : (
               <Tr color="black" fontSize="xs" fontWeight="700">
-                <Td>{t('Não foram registrados problemas para este pedido.')}</Td>
+                <Td>
+                  {t('Não foram registrados problemas para este pedido.')}
+                </Td>
                 <Td></Td>
               </Tr>
             )}

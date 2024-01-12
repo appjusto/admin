@@ -44,7 +44,7 @@ const OnbFooter = () => {
               Termos de uso
             </Link>
             <Text>
-              © {new Date().getFullYear()} AppJusto. Marca Registrada.
+              © {new Date().getFullYear()} appjusto. Marca Registrada.
             </Text>
           </Stack>
           <Link

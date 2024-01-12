@@ -55,7 +55,7 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
             </Tr>
             <Tr fontSize="xs" fontWeight="500">
               <Td color="black">
-                {t('Taxas - AppJusto')}
+                {t('Taxas - appjusto')}
                 <Tooltip
                   placement="top"
                   label={t(

@@ -298,7 +298,7 @@ export const RegistrationStatus = () => {
     return (
       <>
         <AlertWarning
-          title={t('Infelizmente o seu cadastro foi bloqueado no AppJusto')}
+          title={t('Infelizmente o seu cadastro foi bloqueado no appjusto')}
           icon={false}
         >
           <Box mt="4">

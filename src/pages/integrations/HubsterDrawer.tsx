@@ -185,7 +185,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                       <OrderedList>
                         <ListItem>
                           {t(
-                            'Solicite ao suporte do Hubster a integração com o serviço do AppJusto;'
+                            'Solicite ao suporte do Hubster a integração com o serviço do appjusto;'
                           )}
                         </ListItem>
                         <ListItem>
@@ -224,7 +224,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                     </Text>
                     <Tooltip
                       label={t(
-                        'Caso tenha configurado um cardápio no Hubster, integrado ao serviço do AppJusto, é possível importa-lo e fazer sua gestão diretamente por lá. Nesse caso, qualquer modificação nos itens deve ser realizada na aplicação do Hubster.'
+                        'Caso tenha configurado um cardápio no Hubster, integrado ao serviço do appjusto, é possível importa-lo e fazer sua gestão diretamente por lá. Nesse caso, qualquer modificação nos itens deve ser realizada na aplicação do Hubster.'
                       )}
                     >
                       <Box cursor="pointer">
@@ -254,7 +254,7 @@ export const HubsterDrawer = ({ onClose, ...props }: HubsterDrawerProps) => {
                         {t('Usar cardápio do Hubster')}
                       </Radio>
                       <Radio value="appjusto">
-                        {t('Usar cardápio do AppJusto')}
+                        {t('Usar cardápio do appjusto')}
                       </Radio>
                     </HStack>
                   </RadioGroup>

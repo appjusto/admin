@@ -56,7 +56,7 @@ export const Operation2 = () => {
         icon={monitor}
         title={t('Treine sua equipe')}
         description={t(
-          'Aqui, você terá acesso a vídeos objetivos sobre a operação no Appjusto, como: criar a senha da equipe, configuração de cardápio e melhores práticas e gerenciamento de pedidos.'
+          'Aqui, você terá acesso a vídeos objetivos sobre a operação no appjusto, como: criar a senha da equipe, configuração de cardápio e melhores práticas e gerenciamento de pedidos.'
         )}
         time={t('2 minutos')}
         btnLabel={t('Acessar')}

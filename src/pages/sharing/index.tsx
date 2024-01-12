@@ -44,7 +44,7 @@ const SharingPage = () => {
     return encodeURIComponent(
       `Olá, queria indicar o ${
         business?.name
-      }! No AppJusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${getBusinessLinkByMode(
+      }! No appjusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${getBusinessLinkByMode(
         mode
       )}`
     );
@@ -78,7 +78,7 @@ const SharingPage = () => {
       </SectionTitle>
       <Text mt="4">
         {t(
-          'Você pode compartilhar o acesso direto ao seu restaurante no AppJusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
+          'Você pode compartilhar o acesso direto ao seu restaurante no appjusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
         )}
       </Text>
       <Stack
