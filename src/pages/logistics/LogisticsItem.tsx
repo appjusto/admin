@@ -17,8 +17,8 @@ export const LogisticsItem = ({
       <Box minW="24px">
         <Center>
           <Icon
-            as={isDisabled ? MdClose : MdCheck}
-            color={iconDisabled || isDisabled ? 'gray.500' : 'green.600'}
+            as={iconDisabled ? MdClose : MdCheck}
+            color={isDisabled ? 'gray.500' : 'green.600'}
             w="24px"
             h="24px"
           />

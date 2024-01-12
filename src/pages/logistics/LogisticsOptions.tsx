@@ -1,11 +1,11 @@
-import { Badge, Box, Button, Flex, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Skeleton, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
-import { OptionCard } from '../OptionCard';
 import { LogisticsItem } from './LogisticsItem';
 import { LogisticsType } from './LogisticsPage';
+import { OptionCard } from './OptionCard';
 
 interface LogisticsOptionsProps {
   logistics: LogisticsType;
@@ -41,22 +41,15 @@ export const LogisticsOptions = ({
     setAvailableFee(logisticsBaseFee);
   }, [platformFees]);
   // UI
-  if (logisticsDisabled) {
-    return (
-      <Flex mt="4" gap="4">
-        <OptionCard isSelected={logistics === 'appjusto'}>
-          <Flex flexDir="column" justifyContent="center" alignItems="center">
-            <Text fontSize="sm">{t('Com logística')}</Text>
-          </Flex>
-        </OptionCard>
-        <OptionCard isSelected={logistics !== 'appjusto'}>
-          <Text fontSize="sm">{t('Sem logística')}</Text>
-        </OptionCard>
-      </Flex>
-    );
-  }
   return (
-    <Flex mt="4" gap="4" flexDir={{ base: 'column', lg: 'row' }}>
+    <Flex
+      mt="4"
+      gap="4"
+      flexDir={{
+        base: logisticsDisabled ? 'column-reverse' : 'column',
+        lg: logisticsDisabled ? 'row-reverse' : 'row',
+      }}
+    >
       <OptionCard isSelected={isLogisticsSelected}>
         <Flex
           minH="96px"
@@ -86,17 +79,41 @@ export const LogisticsOptions = ({
               } pedidos por mês`
             )}
           </Text>
-          <Badge bgColor="#EBFBEF" color="#1C7B34" mt="6" mb="-8">
-            {t('Recomendado')}
-          </Badge>
+          {!logisticsDisabled ? (
+            <Box
+              py="2px"
+              px="2"
+              bgColor="#EBFBEF"
+              color="#1C7B34"
+              mt="3"
+              mb="-34px"
+              borderRadius="md"
+            >
+              <Text fontSize="xs">{t('Recomendado')}</Text>
+            </Box>
+          ) : (
+            <Box
+              py="2px"
+              px="2"
+              bgColor="#FFF7E4"
+              color="#C39022"
+              mt="3"
+              mb="-34px"
+              borderRadius="md"
+            >
+              <Text fontSize="xs">{t('Indisponível na sua região')}</Text>
+            </Box>
+          )}
         </Flex>
         <Box mt="6" pb="4" borderBottom="1px solid #F2F4F5">
           <Text fontSize="sm">{t('SERVIÇOS')}</Text>
           <LogisticsItem
             title={t('Cardápio digital de venda direta + Market place')}
+            isDisabled={logisticsDisabled}
           />
           <LogisticsItem
             title={t('Entrega pela rede appjusto + rede parceira')}
+            isDisabled={logisticsDisabled}
           />
         </Box>
         <Box mt="6" pb="4" borderBottom="1px solid #F2F4F5">
@@ -105,20 +122,37 @@ export const LogisticsOptions = ({
             title={t(
               'Pagamento online: cartão de crédito (taxa financeira 2,42% + R$0,09), Pix (0,99%), VR/VA (isento)'
             )}
+            isDisabled={logisticsDisabled}
           />
-          <LogisticsItem title={t('Antecipação fácil com taxa de 2,75%')} />
+          <LogisticsItem
+            title={t('Antecipação fácil com taxa de 2,75%')}
+            isDisabled={logisticsDisabled}
+          />
         </Box>
         <Box mt="6" pb="4">
           <Text fontSize="sm">{t('COBERTURA')}</Text>
-          <LogisticsItem title={t('Fraude (Chargeback)')} />
-          <LogisticsItem title={t('Cancelamento após início do preparo')} />
-          <LogisticsItem title={t('Cancelamento por atraso na entrega')} />
+          <LogisticsItem
+            title={t('Fraude (Chargeback)')}
+            isDisabled={logisticsDisabled}
+          />
+          <LogisticsItem
+            title={t('Cancelamento após início do preparo')}
+            isDisabled={logisticsDisabled}
+          />
+          <LogisticsItem
+            title={t('Cancelamento por atraso na entrega')}
+            isDisabled={logisticsDisabled}
+          />
           <LogisticsItem
             title={t(
               'Defeito no produto (ex: embalagem violada, perda de qualidade, etc) desde que ocasionado por problema na entrega'
             )}
+            isDisabled={logisticsDisabled}
           />
-          <LogisticsItem title={t('Extravio dos produtos')} />
+          <LogisticsItem
+            title={t('Extravio dos produtos')}
+            isDisabled={logisticsDisabled}
+          />
         </Box>
         <Button
           mt="2"
@@ -130,6 +164,7 @@ export const LogisticsOptions = ({
           border={isLogisticsSelected ? 'none' : '1px solid'}
           _hover={{ bgColor: '#EBFBEF' }}
           onClick={() => handleChange('appjusto')}
+          disabled={logisticsDisabled}
         >
           {isLogisticsSelected ? t('Selecionado') : t('Selecionar')}
         </Button>
@@ -163,6 +198,19 @@ export const LogisticsOptions = ({
               } pedidos por mês`
             )}
           </Text>
+          {logisticsDisabled ? (
+            <Box
+              py="2px"
+              px="2"
+              bgColor="#EBFBEF"
+              color="#1C7B34"
+              mt="3"
+              mb="-34px"
+              borderRadius="md"
+            >
+              <Text fontSize="xs">{t('Recomendado')}</Text>
+            </Box>
+          ) : null}
         </Flex>
         <Box mt="6" pb="4" borderBottom="1px solid #F2F4F5">
           <Text fontSize="sm">{t('SERVIÇOS')}</Text>
@@ -172,6 +220,7 @@ export const LogisticsOptions = ({
           <LogisticsItem
             title={t('Entrega pela rede appjusto + rede parceira')}
             isDisabled
+            iconDisabled
           />
         </Box>
         <Box mt="6" pb="4" borderBottom="1px solid #F2F4F5">
@@ -189,18 +238,25 @@ export const LogisticsOptions = ({
           <LogisticsItem
             title={t('Cancelamento após início do preparo')}
             isDisabled
+            iconDisabled
           />
           <LogisticsItem
             title={t('Cancelamento por atraso na entrega')}
             isDisabled
+            iconDisabled
           />
           <LogisticsItem
             title={t(
               'Defeito no produto (ex: embalagem violada, perda de qualidade, etc) desde que ocasionado por problema na entrega'
             )}
             isDisabled
+            iconDisabled
           />
-          <LogisticsItem title={t('Extravio dos produtos')} isDisabled />
+          <LogisticsItem
+            title={t('Extravio dos produtos')}
+            isDisabled
+            iconDisabled
+          />
         </Box>
         <Button
           mt="2"
