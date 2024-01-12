@@ -38,7 +38,7 @@ const Sidebar = () => {
       >
         <Box position="relative" w="fill-available" pb="16">
           {isBackOffice ? (
-            <Flex mt="6" px="4">
+            <Flex mt="14" px="4">
               <Box>
                 <Image src={appjustoLogo} height="36px" />
               </Box>
