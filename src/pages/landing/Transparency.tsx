@@ -1,7 +1,6 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import Container from 'common/components/Container';
 import { SectionHeading } from 'common/components/landing/SectionHeading';
-import logo from 'common/img/logo-black-white.svg';
 import { t } from 'utils/i18n';
 import { Content } from './Content';
 import { Section } from './Section';
@@ -26,9 +25,14 @@ export const Transparency = () => {
                 borderRadius="16px"
                 p="6"
               >
-                <Box>
-                  <Image src={logo} width="120px" />
-                </Box>
+                <Text
+                  color="black"
+                  fontSize="2xl"
+                  fontWeight="700"
+                  lineHeight="26px"
+                >
+                  appjusto
+                </Text>
                 <Text mt="4" fontSize="18px" lineHeight="26px" fontWeight="500">
                   {t(
                     'Relações mais justas começam com taxas mais justas para você'
@@ -51,13 +55,12 @@ export const Transparency = () => {
                 p="6"
               >
                 <Text
-                  mt="4"
                   color="#DC3545"
                   fontSize="2xl"
                   fontWeight="700"
                   lineHeight="26px"
                 >
-                  {t('Outras plataformas')}
+                  {t('outras plataformas')}
                 </Text>
                 <Text mt="6" fontSize="lg" lineHeight="26px">
                   {t('Outras plataformas com logística cobram até')}
