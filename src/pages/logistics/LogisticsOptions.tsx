@@ -234,7 +234,11 @@ export const LogisticsOptions = ({
         </Box>
         <Box mt="6" pb="4">
           <Text fontSize="sm">{t('COBERTURA')}</Text>
-          <LogisticsItem title={t('Fraude (Chargeback)')} />
+          <LogisticsItem
+            title={t('Fraude (Chargeback)')}
+            isDisabled
+            iconDisabled
+          />
           <LogisticsItem
             title={t('Cancelamento após início do preparo')}
             isDisabled
