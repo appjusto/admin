@@ -304,7 +304,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           </Text>
           <Text mt="2" fontSize="md">
             {t(
-              'Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 200px de largura'
+              'Para o logo do estabelecimento recomendamos imagens no formato quadrado (1:1) com no mínimo 240px de largura'
             )}
           </Text>
           <ImageUploads
@@ -326,7 +326,7 @@ const BusinessProfile = ({ onboarding, redirect }: OnboardingProps) => {
           </Text>
           <Text mt="2" fontSize="md">
             {t(
-              'Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1280px de largura'
+              'Você pode ter também uma imagem de capa para o seu restaurante. Pode ser foto do local ou de algum prato específico. Recomendamos imagens na proporção retangular (16:9) com no mínimo 1440px de largura'
             )}
           </Text>
           <ImageUploads

@@ -320,11 +320,13 @@ export const getResizedImage = async (
   const image = (await createImage(imageSrc)) as HTMLImageElement;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  const pixelRatio = window.devicePixelRatio;
-  canvas.width = resizedWidth * pixelRatio;
-  canvas.height = (resizedWidth / ratio) * pixelRatio;
+  // const pixelRatio = window.devicePixelRatio;
+  // canvas.width = resizedWidth * pixelRatio;
+  // canvas.height = (resizedWidth / ratio) * pixelRatio;
+  canvas.width = resizedWidth;
+  canvas.height = resizedWidth / ratio;
   if (ctx) {
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    // ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(image, 0, 0, resizedWidth, resizedWidth / ratio);
     //ctx.fillStyle = 'white';

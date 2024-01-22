@@ -455,15 +455,15 @@ export default class BusinessApi {
     files: File[],
     progressHandler?: (progress: number) => void
   ) {
-    const sortedFiles = files.sort((a, b) => b.size - a.size);
+    // const sortedFiles = files.sort((a, b) => b.size - a.size);
     return new Promise<boolean>(async (resolve, reject) => {
       try {
-        sortedFiles.map(async (file, index) => {
+        files.map(async (file, index) => {
           await this.files.upload(
             file,
             this.refs.getBusinessCoverUploadStoragePath(
               businessId,
-              index === 0 ? '1008x360' : '912x360'
+              index === 0 ? '1008x360' : '1440x396'
             ),
             progressHandler
           );

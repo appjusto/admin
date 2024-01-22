@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Tooltip } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Text, Tooltip } from '@chakra-ui/react';
 import imageCompression from 'browser-image-compression';
 import { CloseButton } from 'common/components/buttons/CloseButton';
 import { CroppedAreaProps } from 'common/components/image-uploads/ImageCropping';
@@ -71,7 +71,7 @@ export const ImageUploads = React.memo(
         //if (file.type === 'image/png') setImageType('image/png');
         const options = {
           maxSizeMB: 2,
-          maxWidthOrHeight: 1920,
+          maxWidthOrHeight: 1440,
           useWebWorker: true,
         };
         if (!file)
@@ -167,21 +167,30 @@ export const ImageUploads = React.memo(
           </Flex>
           <Box w="100%" position="relative">
             {ratios.map((ratio, index) => (
-              <ImageCropping
+              <Box
                 key={ratio}
-                mt={4}
-                index={index}
-                image={previewUrl}
-                ratio={ratio}
-                width={croppingW}
-                height={croppingH}
-                onCropEnd={handleCrop}
-                position={index > 0 ? 'absolute' : 'relative'}
-                top={index > 0 ? '0' : undefined}
-                left={index > 0 ? '0' : undefined}
-                zIndex={index > 0 ? '100' : '999'}
-                opacity={index > 0 ? '0' : '1'}
-              />
+                mt={index === 0 ? '0' : '4'}
+                borderBottom="1px solid"
+                borderColor="gray.400"
+              >
+                <Text fontSize="sm" color="black">
+                  {index === 0 ? t('Mobile:') : t('Desktop:')}
+                </Text>
+                <ImageCropping
+                  mt={4}
+                  index={index}
+                  image={previewUrl}
+                  ratio={ratio}
+                  width={croppingW}
+                  height={croppingH}
+                  onCropEnd={handleCrop}
+                  // position={index > 0 ? 'absolute' : 'relative'}
+                  // top={index > 0 ? '0' : undefined}
+                  // left={index > 0 ? '0' : undefined}
+                  // zIndex={index > 0 ? '100' : '999'}
+                  // opacity={index > 0 ? '0' : '1'}
+                />
+              </Box>
             ))}
           </Box>
         </Box>
