@@ -228,6 +228,10 @@ export const OrderBaseDrawer = ({
                         value={getDateAndHour(order?.updatedOn)}
                       />
                       <BaseDrawerInfoItem
+                        label={t('Criado via:')}
+                        value={order?.placedFrom ?? 'N/I'}
+                      />
+                      <BaseDrawerInfoItem
                         label={t('Aceito via:')}
                         value={order?.acceptedFrom ?? 'N/I'}
                       />
