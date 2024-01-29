@@ -266,7 +266,7 @@ const OperationPage = () => {
             </HStack>
           </CheckboxGroup>
           <Text mt="8" fontSize="xl" color="black">
-            {t('Visibilidade do restaurante')}
+            {t('Visibilidade no marketplace')}
             {!isBusinessApproved && (
               <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
                 {t('Disponível após aprovação')}
@@ -275,7 +275,7 @@ const OperationPage = () => {
           </Text>
           <Text mt="2" fontSize="md">
             {t(
-              'Defina se o seu restaurante estará visível, ou não, para os consumidores do appjusto'
+              'Defina se o seu restaurante estará visível, ou não, no marketplace do appjusto'
             )}
           </Text>
           <Flex mt="4" pb="8" alignItems="center">

@@ -103,10 +103,10 @@ export const BusinessLive = () => {
           </Radio>
         </Flex>
       </RadioGroup>
-      <SectionTitle>{t('Visibilidade do restaurante:')}</SectionTitle>
+      <SectionTitle>{t('Visibilidade no marketplace:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
-          'Defina se o seu restaurante estará visível, ou não, para os consumidores do AppJusto'
+          'Defina se o restaurante estará visível, ou não, no marketplace do appjusto'
         )}
       </Text>
       <RadioGroup
