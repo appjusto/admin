@@ -28,6 +28,7 @@ import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment'
 import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
+import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
 
 const OperationPage = () => {
@@ -68,6 +69,8 @@ const OperationPage = () => {
   const minimumOrderRef = React.useRef<HTMLInputElement>(null);
   // helpers
   const isBusinessApproved = business?.situation === 'approved';
+  const isBusinessLogistics =
+    getBusinessService(business?.services, 'logistics') !== undefined;
   // handlers
   const onSubmitHandler = async () => {
     const changes = {
@@ -244,6 +247,9 @@ const OperationPage = () => {
               setAcceptedPaymentMethods(values)
             }
           >
+            <Text mt="2" fontSize="sm" fontWeight="semibold">
+              {t('Online:')}
+            </Text>
             <HStack
               mt="4"
               alignItems="flex-start"
@@ -263,6 +269,40 @@ const OperationPage = () => {
                   {paymentMethodPTOptions[method]}
                 </Checkbox>
               ))}
+            </HStack>
+            <Flex mt="4" gap="4" alignItems="center">
+              <Text fontSize="sm" fontWeight="semibold">
+                {t('Recebido por seu entregador:')}
+              </Text>
+              {isBusinessLogistics ? (
+                <Badge ml="2" px="2" borderRadius="lg" fontSize="12px">
+                  {t('Disponível apenas com entrega própria')}
+                </Badge>
+              ) : null}
+            </Flex>
+            <HStack
+              mt="4"
+              alignItems="flex-start"
+              color="black"
+              spacing={8}
+              fontSize="16px"
+              lineHeight="22px"
+            >
+              <Checkbox value="cash" disabled={isBusinessLogistics}>
+                {t('Dinheiro')}
+              </Checkbox>
+              <Checkbox
+                value="business-credit-card"
+                disabled={isBusinessLogistics}
+              >
+                {t('Cartão de crédito')}
+              </Checkbox>
+              <Checkbox
+                value="business-debit-card"
+                disabled={isBusinessLogistics}
+              >
+                {t('Cartão de débito')}
+              </Checkbox>
             </HStack>
           </CheckboxGroup>
           <Text mt="8" fontSize="xl" color="black">

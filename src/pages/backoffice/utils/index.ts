@@ -86,6 +86,9 @@ export const paymentMethodPTOptions = {
   'vr-alimentação': 'VR Alimentação',
   'vr-refeição': 'VR Refeição',
   'credits': 'Créditos',
+  'cash': 'Dinheiro',
+  'business-credit-card': 'Máquina / crédito',
+  'business-debit-card': 'Máquina / débito',
 };
 
 export const invoiceStatusPTOptions = {

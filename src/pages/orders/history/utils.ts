@@ -1,6 +1,9 @@
 import { Fare, Order, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
-import { orderStatusPTOptionsForTableItem } from 'pages/backoffice/utils';
+import {
+  orderStatusPTOptionsForTableItem,
+  paymentMethodPTOptions,
+} from 'pages/backoffice/utils';
 import {
   getOrderComission,
   getOrderExtrasValue,
@@ -109,7 +112,9 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       appjustoNumber,
       extrasNumber
     );
-    const paymentMethod = order.paymentMethod ?? 'Não encontrado';
+    const paymentMethod = order.paymentMethod
+      ? paymentMethodPTOptions[order.paymentMethod]
+      : 'Não encontrado';
     const paymentDate = getPaymentDate(order);
     const consumerName = order.consumer.name;
     const consumerPhone = order.consumer.phone ?? 'Não informado';
