@@ -81,7 +81,7 @@ export default class OrderApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('timestamps.charged', ordering),
+      orderBy('timestamps.confirming', ordering),
       where('status', 'in', statuses)
     );
     if (queryLimit) q = query(q, limit(queryLimit));
@@ -334,7 +334,7 @@ export default class OrderApi {
     else {
       // orderBy
       if (orderStatus !== 'scheduled')
-        q = query(q, orderBy('timestamps.charged', 'desc'));
+        q = query(q, orderBy('timestamps.confirming', 'desc'));
       else q = query(q, orderBy('scheduledTo', 'desc'));
       // filters
       if (startAfterDoc) q = query(q, startAfter(startAfterDoc));
@@ -342,8 +342,8 @@ export default class OrderApi {
       if (orderStatus !== 'scheduled' && start && end)
         q = query(
           q,
-          where('timestamps.charged', '>=', start),
-          where('timestamps.charged', '<=', end)
+          where('timestamps.confirming', '>=', start),
+          where('timestamps.confirming', '<=', end)
         );
       if (orderStatus === 'scheduled' && start && end)
         q = query(
@@ -385,11 +385,11 @@ export default class OrderApi {
   ): Promise<WithId<Order>[]> {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('timestamps.charged', 'asc'),
+      orderBy('timestamps.confirming', 'asc'),
       where('business.id', '==', businessId),
       where('status', 'in', statuses),
-      where('timestamps.charged', '>=', start),
-      where('timestamps.charged', '<=', end)
+      where('timestamps.confirming', '>=', start),
+      where('timestamps.confirming', '<=', end)
     );
     // Unsubscribe
     const data = await getDocs(q);

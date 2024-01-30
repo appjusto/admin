@@ -1,5 +1,12 @@
-import { Order, OrderItem, OrderStatus, WithId } from '@appjusto/types';
 import {
+  Order,
+  OrderItem,
+  OrderStatus,
+  PayableWith,
+  WithId,
+} from '@appjusto/types';
+import {
+  Badge,
   Box,
   Table,
   Tbody,
@@ -40,6 +47,11 @@ export const OrderDetails = ({ order }: DetailsProps) => {
       : order?.fare?.business?.value;
   const totalPaid = courierPaid + (businessPaid ?? 0);
   const consumerCredits = order?.fare?.credits ?? 0;
+  const isPaymentPendding = order?.paymentMethod
+    ? (
+        ['cash', 'business-credit-card', 'business-debit-card'] as PayableWith[]
+      ).includes(order.paymentMethod)
+    : false;
   const statusColor =
     order?.fare?.business?.status && order?.fare?.business?.status !== 'paid'
       ? 'red'
@@ -170,7 +182,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
             </Text>
           </Text>
           <Text mt="1" fontSize="md">
-            {t('Total pago:')}{' '}
+            {t('Total:')}{' '}
             <Text as="span" color="black">
               {formatCurrency(totalPaid)}
             </Text>
@@ -183,6 +195,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               </Text>
             ) : null}
           </Text>
+          {isPaymentPendding ? (
+            <Badge>
+              {t('Pagamento na entrega') +
+                ' - ' +
+                paymentMethodPTOptions[order?.paymentMethod!]}
+            </Badge>
+          ) : null}
           {order?.fare?.business?.status !== undefined && (
             <>
               <Text mt="1" fontSize="md">
