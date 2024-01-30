@@ -74,7 +74,7 @@ export const LogisticsOptions = ({
           )}
           <Text mt="1" fontSize="14px" textAlign="center">
             {t(
-              `Sem mensalidade para restaurantes com menos de ${
+              `Sem mensalidade para restaurantes com até ${
                 platformFees?.subscription.ordersThreshold ?? '...'
               } pedidos por mês`
             )}
@@ -193,7 +193,7 @@ export const LogisticsOptions = ({
           )}
           <Text mt="1" fontSize="14px" textAlign="center">
             {t(
-              `Sem mensalidade para restaurantes com menos de ${
+              `Sem mensalidade para restaurantes com até ${
                 platformFees?.subscription.ordersThreshold ?? '...'
               } pedidos por mês`
             )}

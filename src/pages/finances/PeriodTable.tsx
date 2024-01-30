@@ -9,6 +9,7 @@ import {
   Tooltip,
   Tr,
 } from '@chakra-ui/react';
+import { useFetchBusinessSubscriptionByPeriod } from 'app/api/ledger/useFetchBusinessSubscriptionByPeriod';
 import { useFetchBusinessOrdersByMonth } from 'app/api/order/useFetchBusinessOrdersByMonth';
 import { usePlatformFees } from 'app/api/platform/usePlatformFees';
 import { useContextBusinessId } from 'app/state/business/context';
@@ -35,6 +36,7 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
     netValue,
     ordersNumber,
   } = useFetchBusinessOrdersByMonth(businessId, month);
+  const subscription = useFetchBusinessSubscriptionByPeriod(businessId, month);
   // helpers
   const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
   const year = month ? month.getFullYear() : 'N/E';
@@ -112,6 +114,12 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
                 {formatCurrency(extras)}
               </Td>
             </Tr>
+            <Tr color="black" fontSize="xs" fontWeight="500">
+              <Td>{t('Mensalidade (isenta até 30 pedidos no mês)')}</Td>
+              <Td isNumeric color="red">
+                {`- ${formatCurrency(subscription)}`}
+              </Td>
+            </Tr>
           </>
         )}
       </Tbody>
@@ -123,7 +131,7 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
             )}
           </Th>
           <Th color="green.700" isNumeric>
-            {formatCurrency(netValue)}
+            {formatCurrency(netValue - subscription)}
           </Th>
         </Tr>
       </Tfoot>

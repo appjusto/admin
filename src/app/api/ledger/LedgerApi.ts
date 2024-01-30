@@ -123,6 +123,24 @@ export default class LedgerApi {
     return toBusiness.concat(fromBusiness);
   }
 
+  async fetchBusinessSubscriptionLedgerByPeriod(
+    businessId: string,
+    start: Date,
+    end: Date
+  ) {
+    // operation business-subscription
+    const q = query(
+      this.refs.getLedgerRef(),
+      orderBy('createdOn', 'desc'),
+      where('from.accountId', '==', businessId),
+      where('operation', '==', 'business-subscription'),
+      where('createdOn', '>=', start),
+      where('createdOn', '<=', end)
+    );
+    const snapshot = await getDocs(q);
+    return documentsAs<LedgerEntry>(snapshot.docs);
+  }
+
   async fetchBusinessApprovedLedgersByOperation(
     businessId: string,
     operations: LedgerEntryOperation[]
