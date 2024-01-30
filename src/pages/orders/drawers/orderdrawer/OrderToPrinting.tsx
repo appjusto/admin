@@ -220,9 +220,15 @@ export const OrderToPrinting = React.forwardRef<
         </>
       )}
       <Box mt="4" bg="black" textAlign="center">
-        <Text fontSize="12px" fontWeight="700" color="white">
-          {t('Este pedido já está pago')}
-        </Text>
+        {order?.timestamps.charged ? (
+          <Text fontSize="12px" fontWeight="700" color="white">
+            {t('Este pedido já está pago')}
+          </Text>
+        ) : (
+          <Text fontSize="12px" fontWeight="700" color="white">
+            {t('Este pedido será pago na entrega')}
+          </Text>
+        )}
       </Box>
     </Box>
   );
