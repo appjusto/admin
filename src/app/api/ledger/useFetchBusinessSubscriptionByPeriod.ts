@@ -1,4 +1,4 @@
-import { LedgerEntry, WithId } from '@appjusto/types';
+import { LedgerEntry, LedgerEntryStatus, WithId } from '@appjusto/types';
 import { useContextApi } from 'app/state/api/context';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -32,8 +32,15 @@ export const useFetchBusinessSubscriptionByPeriod = (
 
   React.useEffect(() => {
     if (!entries?.length) return;
-    const value = entries[0].value;
-    setSubscription(value);
+    const entry = entries[0];
+    if (
+      entry &&
+      (['processing', 'approved', 'paid'] as LedgerEntryStatus[]).includes(
+        entry.status
+      )
+    ) {
+      setSubscription(entry.value);
+    }
   }, [entries]);
   // return
   return subscription;
