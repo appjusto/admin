@@ -9,9 +9,9 @@ import { MdOutlineInfo } from 'react-icons/md';
 import { formatCurrency, formatPct } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SupportMaterials } from '../communication/SupportMaterials';
+import BannersContainer from './banners/BannersContainer';
 import InfoBox from './InfoBox';
 import LineChart from './LineChart';
-import BannersContainer from './banners/BannersContainer';
 
 export const Panel = () => {
   // context

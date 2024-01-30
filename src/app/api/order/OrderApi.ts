@@ -100,7 +100,7 @@ export default class OrderApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('timestamps.charged', ordering),
+      orderBy('timestamps.confirming', ordering),
       where('status', 'in', statuses),
       where('staff.id', '==', staffId)
     );
@@ -120,7 +120,7 @@ export default class OrderApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('timestamps.charged', ordering),
+      orderBy('timestamps.confirming', ordering),
       where('status', 'in', statuses),
       limit(queryLimit)
     );
@@ -142,7 +142,7 @@ export default class OrderApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getOrdersRef(),
-      orderBy('timestamps.charged', ordering),
+      orderBy('timestamps.confirming', ordering),
       where('flags', 'array-contains-any', flags),
       limit(queryLimit)
     );

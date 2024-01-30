@@ -71,7 +71,7 @@ const getOrderExtrasValueSerialazed = (fare?: Fare) => {
 
 const headers = [
   { label: 'ID', key: 'id' },
-  { label: 'Criado em', key: 'charged' },
+  { label: 'Criado em', key: 'createdAt' },
   { label: 'Agendado para', key: 'scheduledTo' },
   { label: 'Entregue em', key: 'delivered' },
   { label: 'Status', key: 'status' },
@@ -92,7 +92,11 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
 
   const data = orders.map((order) => {
     // helpers
-    const charged = getDateAndHour(order.timestamps.charged);
+    const createdAt = getDateAndHour(
+      order.scheduledTo
+        ? order.timestamps.scheduled
+        : order.timestamps.confirmed
+    );
     const scheduledTo = order.scheduledTo
       ? getDateAndHour(order.scheduledTo)
       : 'Tempo real';
@@ -121,7 +125,7 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
     const consumerEmail = order.consumer.email ?? 'Não informado';
     return {
       id: order.code,
-      charged,
+      createdAt,
       scheduledTo,
       delivered,
       status,

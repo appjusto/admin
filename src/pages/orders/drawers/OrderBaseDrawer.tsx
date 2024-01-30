@@ -303,8 +303,8 @@ export const OrderBaseDrawer = ({
                   {t('Horário do pedido:')}{' '}
                   <Text as="span" color="black" fontWeight="700">
                     {getDateAndHour(
-                      isScheduled
-                        ? order?.timestamps.charged
+                      order?.status === 'scheduled'
+                        ? order.timestamps.scheduled
                         : order?.timestamps.confirmed
                     )}
                   </Text>
