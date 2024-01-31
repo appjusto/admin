@@ -1,4 +1,5 @@
-import { Box, Button, Center, Icon, Stack, Text } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, HStack, Stack, Text } from '@chakra-ui/react';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
@@ -6,17 +7,12 @@ import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
-import { MdInfoOutline } from 'react-icons/md';
 import { slugify } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { LinkBox } from './LinkBox';
-import { LinkBoxWithOption } from './LinkBoxWithOption';
-
-export type Mode = 'whatsapp' | 'in-store';
 
 export type Copied = {
   status: boolean;
-  mode?: Mode;
 };
 
 const SharingPage = () => {
@@ -29,24 +25,19 @@ const SharingPage = () => {
   const { isLoading } = updateSlugResult;
   // state
   const [slug, setSlug] = React.useState('');
+  const [isEdditing, setIsEdditing] = React.useState(false);
   const [deeplink, setDeeplink] = React.useState('');
   const [isCopied, setIsCopied] = React.useState<Copied>({ status: false });
   // handlers
-  const getBusinessLinkByMode = (mode?: Mode) =>
-    `${deeplink}${mode ? `?mode=${mode}` : ''}`;
-  const copyToClipboard = (mode?: 'whatsapp' | 'in-store') => {
-    const copied = { status: true, mode };
+  const copyToClipboard = () => {
+    const copied = { status: true };
     setIsCopied(copied);
     setTimeout(() => setIsCopied({ status: false }), 2000);
-    return navigator.clipboard.writeText(getBusinessLinkByMode(mode));
+    return navigator.clipboard.writeText(deeplink);
   };
-  const getWhatsappSharingMessage = (mode?: Mode) => {
+  const getWhatsappSharingMessage = () => {
     return encodeURIComponent(
-      `Olá, queria indicar o ${
-        business?.name
-      }! No appjusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${getBusinessLinkByMode(
-        mode
-      )}`
+      `Olá, queria indicar o ${business?.name}! No appjusto, os preços dos pratos são menores, e você valoriza mais ainda o restaurante e o entregador. Um delivery mais justo de verdade ;)\n\n${deeplink}`
     );
   };
   const handleUpdate = () => {
@@ -57,6 +48,7 @@ const SharingPage = () => {
   React.useEffect(() => {
     if (!business?.slug) {
       if (business?.name) setSlug(slugify(business?.name));
+      setIsEdditing(true);
     } else {
       const deeplink =
         process.env.REACT_APP_ENVIRONMENT === 'live'
@@ -71,90 +63,93 @@ const SharingPage = () => {
     <Box>
       <PageHeader
         title={t('Compartilhamento')}
-        subtitle={t('Crie e gerencie os seus links de compartilhamento.')}
+        subtitle={t('Crie e gerencie o link do seu restaurante.')}
       />
-      <SectionTitle mt="8">
-        {t('Configure o nome do seu link de compartilhamento')}
-      </SectionTitle>
-      <Text mt="4">
-        {t(
-          'Você pode compartilhar o acesso direto ao seu restaurante no appjusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
-        )}
-      </Text>
-      <Stack
-        display={
-          userAbility?.can('update', 'businesses', 'slug') ? 'flex' : 'none'
-        }
-        mt="4"
-        spacing={2}
-        direction={{ base: 'column', md: 'row' }}
-      >
-        <CustomInput
-          mt="0"
-          maxW="320px"
-          id="custom-slug"
-          label={t('Identificador do restaurante')}
-          placeholder={t('Digite um identificador')}
-          value={slug}
-          onChange={(e) => setSlug(slugify(e.target.value))}
-          onBlur={(e) => setSlug(slugify(e.target.value, true))}
-        />
-        <Button
-          h="60px"
-          minW="120px"
-          onClick={handleUpdate}
-          isLoading={isLoading}
-        >
-          {business?.slug ? t('Salvar') : t('Salvar e gerar links')}
-        </Button>
-      </Stack>
       {business?.slug && (
-        <>
-          <Stack
-            mt="8"
-            direction="row"
-            spacing={4}
-            alignItems="center"
-            p="6"
-            bgColor="#F6F6F6"
-            borderRadius="lg"
-            color="black"
-          >
-            <Center p="2" bgColor="#fff" borderRadius="18px">
-              <Icon as={MdInfoOutline} w="24px" h="24px" />
-            </Center>
-            <Text
-              maxW="847px"
-              fontSize="16px"
-              lineHeight="22px"
-              fontWeight="500"
-            >
+        <LinkBox
+          id="QRCode"
+          title="Cardápio digital"
+          description="Link para a página do seu restaurante no appjusto"
+          copied={isCopied}
+          link={deeplink}
+          sharingMessage={getWhatsappSharingMessage()}
+          copy={copyToClipboard}
+        />
+      )}
+      {isEdditing ? (
+        <Box pb="4" borderBottom="1px solid #EEEEEE">
+          <SectionTitle mt="8">
+            {t('Configure seu link de compartilhamento')}
+          </SectionTitle>
+          {business?.slug ? (
+            <Text mt="4">
               {t(
-                'Caso o cliente tenha o aplicativo do appjusto instalado, poderá abrir os links abaixo diretamente no app ou no navegador padrão. Se abrir pelo navegador, ele verá o cardápio digital com a opção do link selecionado.'
+                'Edite o identificador do link de acesso direto ao seu restaurante.'
               )}
             </Text>
+          ) : (
+            <Text mt="4">
+              {t(
+                'Você pode compartilhar o link de acesso direto ao seu restaurante no appjusto. Crie um identificador, com a sugestão abaixo ou digitando à sua escolha e clicando em salvar, depois copie o link gerado e divulgue nas suas redes!'
+              )}
+            </Text>
+          )}
+          <Stack
+            display={
+              userAbility?.can('update', 'businesses', 'slug') ? 'flex' : 'none'
+            }
+            mt="4"
+            spacing={2}
+            direction={{ base: 'column', md: 'row' }}
+          >
+            <CustomInput
+              mt="0"
+              maxW="320px"
+              id="custom-slug"
+              label={t('Identificador do restaurante')}
+              placeholder={t('Digite um identificador')}
+              value={slug}
+              onChange={(e) => setSlug(slugify(e.target.value))}
+              onBlur={(e) => setSlug(slugify(e.target.value, true))}
+            />
+            <Button
+              h="60px"
+              minW="120px"
+              onClick={handleUpdate}
+              isLoading={isLoading}
+            >
+              {business?.slug ? t('Salvar') : t('Salvar e gerar links')}
+            </Button>
+            {business?.slug !== undefined ? (
+              <Button
+                h="60px"
+                minW="120px"
+                variant="outline"
+                onClick={() => setIsEdditing(false)}
+              >
+                {t('Cancelar')}
+              </Button>
+            ) : null}
           </Stack>
-          <LinkBoxWithOption
-            id="QRCode1"
-            title="Cardápio com botão: fazer pedidos"
-            description="Ao clicar, seu cliente abrirá o cardápio com um botão de ação. Escolha a ação abaixo:"
-            mode="whatsapp"
-            copied={isCopied}
-            copy={(mode) => copyToClipboard(mode)}
-            getLink={(mode) => getBusinessLinkByMode(mode)}
-            getSharingMessage={(mode) => getWhatsappSharingMessage(mode)}
-          />
-          <LinkBox
-            id="QRCode2"
-            title="Cardápio sem botão: somente visualização"
-            description="Ao clicar, seu cliente abrirá a página do cardápio para visualização na loja, sem a opção de pedir"
-            mode="in-store"
-            copied={isCopied}
-            link={getBusinessLinkByMode('in-store')}
-            sharingMessage={getWhatsappSharingMessage('in-store')}
-            copy={() => copyToClipboard('in-store')}
-          />
-        </>
+        </Box>
+      ) : (
+        <Flex
+          // justifyContent="end"
+          mt="4"
+          py="2"
+          borderBottom="1px solid #EEEEEE"
+        >
+          <HStack
+            spacing={2}
+            alignItems="center"
+            color="green.600"
+            cursor="pointer"
+            onClick={() => setIsEdditing(true)}
+          >
+            <Text>Editar link</Text>
+            <EditIcon />
+          </HStack>
+        </Flex>
       )}
     </Box>
   );

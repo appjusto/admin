@@ -13,7 +13,9 @@ import { CustomButton } from 'common/components/buttons/CustomButton';
 import React from 'react';
 import QRCode from 'react-qr-code';
 import { t } from 'utils/i18n';
-import { Copied, Mode } from '.';
+import { Copied } from '.';
+
+type Mode = 'whatsapp' | 'in-store';
 
 interface LinkBoxProps {
   id: string;
@@ -160,9 +162,7 @@ export const LinkBoxWithOption = ({
         />
         <Stack mt="6" spacing={4} direction={{ base: 'column', md: 'row' }}>
           <Button fontSize="sm" onClick={() => copy(ModeStatus)}>
-            {copied.status && copied.mode === ModeStatus
-              ? t('Copiado!')
-              : t('Copiar link')}
+            {copied.status ? t('Copiado!') : t('Copiar link')}
           </Button>
           <CustomButton
             mt="0"
