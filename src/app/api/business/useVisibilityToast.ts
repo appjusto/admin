@@ -17,9 +17,9 @@ export const useVisibilityToast = (business?: WithId<Business> | null) => {
       status: 'error',
       requestId: 'disabled-business-alert',
       message: {
-        title: 'Seu restaurante não está visível.',
+        title: 'Seu restaurante não está visível no marketplace.',
         description:
-          'Seu restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.',
+          'Apenas clientes com seu link direto poderão realizar pedidos. Para deixá-lo visível, vá até a seção de "visibilidade no marketplace" no menu "operação" ou contate o administrador desta unidade.',
       },
       duration: 12000,
     });

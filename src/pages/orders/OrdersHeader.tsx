@@ -29,11 +29,9 @@ export const OrdersHeader = () => {
   const { isBusinessOpen } = useOrdersContext();
   // helpers
   const isBusinessAvailable = business?.status === 'available';
-  const statusLabel = React.useMemo(() => {
-    if (!business?.enabled) return 'Restaurante invisível';
-    if (isBusinessOpen) return 'Restaurante aberto';
-    else return 'Restaurante fechado';
-  }, [business?.enabled, isBusinessOpen]);
+  const statusLabel = isBusinessOpen
+    ? 'Restaurante aberto'
+    : 'Restaurante fechado';
   // UI
   return (
     <Flex
@@ -69,7 +67,7 @@ export const OrdersHeader = () => {
                   color="black"
                   hasArrow
                   label={t(
-                    'O restaurante não aparecerá para seus clientes. Para deixá-lo visível, vá até a seção de "visibilidade" no menu "operação" ou contate o administrador desta unidade.'
+                    'O restaurante não está visível no marketplace. Para deixá-lo visível, vá até a seção de "visibilidade no marketplace" no menu "operação" ou contate o administrador desta unidade'
                   )}
                 >
                   <Text as="span" ml="2">

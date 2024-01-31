@@ -10,7 +10,6 @@ import { useBusinessKeepAlive } from 'app/api/business/useBusinessKeepAlive';
 import { useCustomToastAutoPlay } from 'app/api/business/useCustomToastAutoPlay';
 import { useFreshDesk } from 'app/api/business/useFresdesk';
 import { useUpdateManagerLastBusinessId } from 'app/api/business/useUpdateManagerLastBusinessId';
-import { useVisibilityToast } from 'app/api/business/useVisibilityToast';
 import { OrderChatGroup } from 'app/api/chat/types';
 import { useBusinessChats } from 'app/api/chat/useBusinessChats';
 import { useNewChatMessages } from 'app/api/order/useNewChatMessages';
@@ -69,7 +68,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { manager } = useContextManagerProfile();
   const { business } = useContextBusiness();
   useBusinessKeepAlive(business?.id);
-  useVisibilityToast(business);
+  // useVisibilityToast(business);
   useCustomToastAutoPlay(business);
   useUpdateManagerLastBusinessId(manager, business?.id);
   const { scheduledOrders, scheduledOrdersNumber, fetchNextScheduledOrders } =

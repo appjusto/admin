@@ -43,7 +43,6 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   );
   const checkBusinessStatus = React.useCallback(() => {
     if (business?.situation !== 'approved') return;
-    if (!business?.enabled) return;
     if (!business?.schedules) return;
     if (business?.status === 'unavailable') return;
     const today = getServerTime();
@@ -71,7 +70,6 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     }
   }, [
     business?.situation,
-    business?.enabled,
     business?.schedules,
     business?.status,
     isOpen,
@@ -81,7 +79,6 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
   // side effects
   React.useEffect(() => {
     if (business?.situation !== 'approved') return;
-    if (!business?.enabled) return;
     if (!business?.schedules) return;
     if (business?.status === 'unavailable') return;
     checkBusinessStatus();
@@ -91,7 +88,6 @@ export const useBusinessOpenClose = (business?: WithId<Business> | null) => {
     return () => clearInterval(openCloseInterval);
   }, [
     business?.situation,
-    business?.enabled,
     business?.schedules,
     business?.status,
     checkBusinessStatus,
