@@ -164,6 +164,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
       {order?.status !== 'canceled' && (
         <>
           <SectionTitle mt="10">{t('Dados do pagamento')}</SectionTitle>
+          {isPaymentPendding ? (
+            <Badge bgColor="#FFBE00" borderRadius="md">
+              {t('Pagamento na entrega') +
+                ' - ' +
+                paymentMethodPTOptions[order?.paymentMethod!]}
+            </Badge>
+          ) : null}
           {order?.fulfillment === 'delivery' && (
             <Text mt="1" fontSize="md">
               {t('Frete:')}{' '}
@@ -195,13 +202,6 @@ export const OrderDetails = ({ order }: DetailsProps) => {
               </Text>
             ) : null}
           </Text>
-          {isPaymentPendding ? (
-            <Badge>
-              {t('Pagamento na entrega') +
-                ' - ' +
-                paymentMethodPTOptions[order?.paymentMethod!]}
-            </Badge>
-          ) : null}
           {order?.fare?.business?.status !== undefined && (
             <>
               <Text mt="1" fontSize="md">

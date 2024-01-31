@@ -12,7 +12,7 @@ export const CollectiveVision = (props: BoxProps) => {
         <Text mt="2">
           {t('Construir coletivamente uma')}
           <Text as="span" fontWeight="semibold">
-            {t('alternativa contra a exploração e contra o monopólio')}
+            {t(' alternativa contra a exploração e contra o monopólio ')}
           </Text>
           {t(
             'no delivery, que seja realmente boa para toda a comunidade  que faz parte do processo:'
