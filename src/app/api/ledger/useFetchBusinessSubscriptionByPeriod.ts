@@ -31,7 +31,10 @@ export const useFetchBusinessSubscriptionByPeriod = (
   }, [api, businessId, month]);
 
   React.useEffect(() => {
-    if (!entries?.length) return;
+    if (!entries?.length) {
+      setSubscription(0);
+      return;
+    }
     const entry = entries[0];
     if (
       entry &&

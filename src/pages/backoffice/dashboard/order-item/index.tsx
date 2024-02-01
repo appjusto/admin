@@ -55,7 +55,7 @@ export const OrderListItem = ({ listType, order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const comparisonTime = order.timestamps.confirmed;
+      const comparisonTime = order.timestamps.confirming;
       const confirmedAt = getTimestampMilliseconds(comparisonTime as Timestamp);
       const time = confirmedAt ? getTimeUntilNow(now, confirmedAt) : null;
       if (time) setOrderDT(time);

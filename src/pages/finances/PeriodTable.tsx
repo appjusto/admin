@@ -38,8 +38,10 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
   } = useFetchBusinessOrdersByMonth(businessId, month);
   const subscription = useFetchBusinessSubscriptionByPeriod(businessId, month);
   // helpers
-  const monthName = month ? getMonthName(month.getMonth()) : 'N/E';
+  const lastMonth = month ? getMonthName(month.getMonth() - 1) : 'N/E';
+  const currentMonth = month ? getMonthName(month.getMonth()) : 'N/E';
   const year = month ? month.getFullYear() : 'N/E';
+  const total = netValue - subscription;
   // UI
   return (
     <Table mt="6" size="md" variant="simple">
@@ -115,7 +117,9 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
               </Td>
             </Tr>
             <Tr color="black" fontSize="xs" fontWeight="500">
-              <Td>{t('Mensalidade (isenta até 30 pedidos no mês)')}</Td>
+              <Td>
+                {t(`Mensalidade / ${lastMonth} (isenta até 30 pedidos no mês)`)}
+              </Td>
               <Td isNumeric color="red">
                 {`- ${formatCurrency(subscription)}`}
               </Td>
@@ -127,11 +131,11 @@ export const PeriodTable = ({ month }: PeriodTableProps) => {
         <Tr>
           <Th>
             {t(
-              `Resultado para ${monthName} de ${year} (Total de pedidos: ${ordersNumber})`
+              `Resultado para ${currentMonth} de ${year} (Total de pedidos: ${ordersNumber})`
             )}
           </Th>
-          <Th color="green.700" isNumeric>
-            {formatCurrency(netValue - subscription)}
+          <Th color={total >= 0 ? 'green.700' : 'red'} isNumeric>
+            {formatCurrency(total)}
           </Th>
         </Tr>
       </Tfoot>
