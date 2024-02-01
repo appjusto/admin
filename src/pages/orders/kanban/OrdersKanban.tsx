@@ -15,6 +15,7 @@ import { useOrdersContext } from 'app/state/order';
 import { ReactComponent as SearchIcon } from 'common/img/searchIcon.svg';
 import { isEqual } from 'lodash';
 import React, { KeyboardEvent } from 'react';
+import { IoIosWarning } from 'react-icons/io';
 import { Link as RouterLink } from 'react-router-dom';
 import { getDateTime } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -198,6 +199,35 @@ export const OrdersKanban = () => {
             </Text>
           </Text>
         </Flex>
+      </Flex>
+      <Flex
+        mt="6"
+        alignItems="center"
+        border="1px solid #FFBE00"
+        borderRadius="lg"
+        bgColor="#FFF6D9"
+        px="6"
+        py="5"
+      >
+        <Icon as={IoIosWarning} w="6" h="6" color="#FFBE00" />
+        <Box ml="4">
+          <Text color="black">
+            {t(
+              'Em breve você precisará migrar para o novo gestor de pedidos, uma aplicação mais leve, criada para melhorar sua experiência com o appjusto.'
+            )}
+          </Text>
+          <Text color="black">
+            {t('Para acessar o novo gestor e fazer o seu login, ')}
+            <Link
+              fontWeight="semibold"
+              textDecor="underline"
+              href="https://pedidos.appjusto.com.br/"
+              target="_blank"
+            >
+              {t('clique aqui.')}
+            </Link>
+          </Text>
+        </Box>
       </Flex>
       {searchedOrder ? (
         <OrderSearchResult orders={searchedOrder} />
