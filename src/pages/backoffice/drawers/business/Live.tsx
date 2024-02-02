@@ -85,7 +85,7 @@ export const BusinessLive = () => {
       <SectionTitle>{t('Fechamento de emergência:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
-          'O restaurante ficará fechado até o horário de abertura do próximo dia de funcionamento'
+          'O restaurante ficará fechado até que o fechamento de emergência seja desativado'
         )}
       </Text>
       <RadioGroup
