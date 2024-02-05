@@ -144,6 +144,11 @@ export const OrderDetails = ({ order }: DetailsProps) => {
         </>
       )}
       <SectionTitle mt="10">{t('Observações')}</SectionTitle>
+      {order?.paymentInfo && (
+        <Text mt="1" fontSize="md" color="red">
+          {order.paymentInfo}
+        </Text>
+      )}
       {order?.consumer.cpf && (
         <Text mt="1" fontSize="md" color="red">
           {t(
@@ -156,7 +161,7 @@ export const OrderDetails = ({ order }: DetailsProps) => {
           {order?.additionalInfo}
         </Text>
       )}
-      {!order?.consumer.cpf && !order?.additionalInfo && (
+      {!order?.paymentInfo && !order?.consumer.cpf && !order?.additionalInfo && (
         <Text mt="1" fontSize="md">
           {t('Sem observações.')}
         </Text>
