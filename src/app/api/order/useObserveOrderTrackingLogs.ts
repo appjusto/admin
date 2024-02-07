@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { useUserCanReadEntity } from '../auth/useUserCanReadEntity';
 
-export const useObserveOrderChangeLogs = (orderId: string | undefined) => {
+export const useObserveOrderTrackingLogs = (orderId: string | undefined) => {
   // context
   const api = useContextApi();
   const userCanRead = useUserCanReadEntity('orders');
@@ -29,7 +29,7 @@ export const useObserveOrderChangeLogs = (orderId: string | undefined) => {
   React.useEffect(() => {
     if (!userCanRead) return;
     if (!orderId) return;
-    const unsub = api.order().observeOrderLogs(orderId, 'change', setLogs);
+    const unsub = api.order().observeOrderTrackingLogs(orderId, setLogs);
     return () => unsub();
   }, [api, userCanRead, orderId]);
   // return

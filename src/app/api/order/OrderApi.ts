@@ -479,6 +479,19 @@ export default class OrderApi {
     return customCollectionSnapshot(q, resultHandler);
   }
 
+  observeOrderTrackingLogs(
+    orderId: string,
+    resultHandler: (logs: WithId<OrderLog>[]) => void
+  ): Unsubscribe {
+    const q = query(
+      this.refs.getOrderLogsRef(orderId),
+      where('type', 'in', ['change', 'info']),
+      orderBy('timestamp', 'asc')
+    );
+    // returns the unsubscribe function
+    return customCollectionSnapshot(q, resultHandler);
+  }
+
   observeOrderMatchingLogs(
     orderId: string,
     resultHandler: (
