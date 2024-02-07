@@ -106,9 +106,7 @@ export const OrderTracking = ({
   // side effects
   React.useEffect(() => {
     if (!trackingLogs?.length) return;
-    console.log(trackingLogs[0]);
     if (trackingLogs[0].type !== undefined) {
-      console.log('New logs');
       const filtered = trackingLogs?.filter((log) => {
         if (log.type === 'change') {
           return (
@@ -124,7 +122,6 @@ export const OrderTracking = ({
       }) as WithId<OrderTrakingLog>[];
       setFilteredLogs(filtered);
     } else {
-      console.log('Old logs');
       setFilteredLogs(trackingLogs as WithId<OrderTrakingLog>[]);
     }
   }, [trackingLogs]);
