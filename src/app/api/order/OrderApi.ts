@@ -29,24 +29,24 @@ import {
   LalamoveQuotation,
 } from '@appjusto/types/external/lalamove/index';
 import * as Sentry from '@sentry/react';
-import { documentAs, documentsAs, FirebaseDocument } from 'core/fb';
+import { FirebaseDocument, documentAs, documentsAs } from 'core/fb';
 import dayjs from 'dayjs';
 import { FirebaseError } from 'firebase/app';
 import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  Timestamp,
+  Unsubscribe,
   addDoc,
   deleteDoc,
-  DocumentData,
   getDoc,
   getDocs,
   limit,
   onSnapshot,
   orderBy,
   query,
-  QueryDocumentSnapshot,
   serverTimestamp,
   startAfter,
-  Timestamp,
-  Unsubscribe,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -612,6 +612,25 @@ export default class OrderApi {
     resultHandler: (matching: OrderMatching | null) => void
   ): Unsubscribe {
     const ref = this.refs.getOrderMatchingRef(orderId);
+    const unsubscribe = onSnapshot(
+      ref,
+      (querySnapshot) => {
+        if (querySnapshot.exists())
+          resultHandler(querySnapshot.data() as OrderMatching);
+        else resultHandler(null);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+  observeOrderMatching(
+    orderId: string,
+    resultHandler: (matching: OrderMatching | null) => void
+  ): Unsubscribe {
+    const ref = this.refs.getMatchingOrderRef(orderId);
     const unsubscribe = onSnapshot(
       ref,
       (querySnapshot) => {

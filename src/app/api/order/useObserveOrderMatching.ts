@@ -22,6 +22,8 @@ export const useObserveOrderMatching = (
   const userCanRead = useUserCanReadEntity('orders');
   const { isBackofficeUser } = useContextStaffProfile();
   // state
+  const [privateMatching, setPrivateMatching] =
+    React.useState<OrderMatching | null>();
   const [matching, setMatching] = React.useState<OrderMatching | null>();
   const [logsQueryLimit, setlogsQueryLimit] = React.useState<
     number | undefined
@@ -61,9 +63,18 @@ export const useObserveOrderMatching = (
     if (!orderId) return;
     if (!isBackofficeUser) return;
     if (!isActive) return;
-    const unsub = api.order().observeOrderPrivateMatching(orderId, setMatching);
+    const unsub = api.order().observeOrderMatching(orderId, setMatching);
     return () => unsub();
   }, [api, userCanRead, orderId, isBackofficeUser, isActive]);
+  React.useEffect(() => {
+    if (!orderId) return;
+    if (matching === null) {
+      const unsub = api
+        .order()
+        .observeOrderPrivateMatching(orderId, setPrivateMatching);
+      return () => unsub();
+    }
+  }, [api, matching, orderId]);
   // order matching logs
   React.useEffect(() => {
     if (!userCanRead) return;
@@ -138,7 +149,7 @@ export const useObserveOrderMatching = (
   }, [notifiedCouriersMap]);
   // return
   return {
-    matching,
+    matching: matching ?? privateMatching,
     logs,
     notifiedCouriers,
     clearLogsQueryLimit,

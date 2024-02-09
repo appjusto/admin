@@ -178,6 +178,10 @@ export default class FirebaseRefs {
   getOrderFraudPreventionRef = (orderId: string) =>
     doc(this.getOrderPrivateRef(orderId), 'fraudprevention');
 
+  getMatchingRef = () => collection(this.firestore, 'matching');
+  getMatchingOrderRef = (orderId: string) =>
+    doc(this.getMatchingRef(), orderId);
+
   // incidents
   getIncidentsRef = () => collection(this.firestore, 'incidents');
   getIncidentRef = (incidentsId: string) =>
