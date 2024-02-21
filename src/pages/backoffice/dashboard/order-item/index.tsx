@@ -5,6 +5,7 @@ import { useContextServerTime } from 'app/state/server-time';
 import foodIcon from 'common/img/bo-food.svg';
 import p2pIcon from 'common/img/bo-p2p.svg';
 import { Timestamp } from 'firebase/firestore';
+import { getSafeOrderStartTimestamp } from 'pages/orders/utils';
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { getTimestampMilliseconds, getTimeUntilNow } from 'utils/functions';
@@ -55,7 +56,12 @@ export const OrderListItem = ({ listType, order }: Props) => {
   React.useEffect(() => {
     const setNewTime = () => {
       const now = getServerTime().getTime();
-      const comparisonTime = order.timestamps.confirming;
+      const isScheduled =
+        order.scheduledTo !== null && order.scheduledTo !== undefined;
+      const comparisonTime = getSafeOrderStartTimestamp(
+        order.timestamps,
+        isScheduled
+      );
       const confirmedAt = getTimestampMilliseconds(comparisonTime as Timestamp);
       const time = confirmedAt ? getTimeUntilNow(now, confirmedAt) : null;
       if (time) setOrderDT(time);

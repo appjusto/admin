@@ -1,4 +1,9 @@
-import { Order, WithId } from '@appjusto/types';
+import {
+  Order,
+  OrderStatusTimestamps,
+  PayableWith,
+  WithId,
+} from '@appjusto/types';
 import dayjs from 'dayjs';
 import { FieldValue, Timestamp } from 'firebase/firestore';
 
@@ -79,4 +84,33 @@ export const getOrderDestinationNeighborhood = (secondary?: string) => {
   if (!secondary) return 'N/E';
   const neighborhood = secondary.split(',')[0];
   return neighborhood;
+};
+
+export const getOrderPaymentChannel = (
+  paymentMethod?: PayableWith
+): 'online' | 'offline' => {
+  if (
+    paymentMethod &&
+    (
+      ['cash', 'business-credit-card', 'business-debit-card'] as PayableWith[]
+    ).includes(paymentMethod)
+  ) {
+    return 'offline';
+  }
+  return 'online';
+};
+
+export const getSafeOrderStartTimestamp = (
+  timestamps: OrderStatusTimestamps,
+  isScheduled?: boolean
+) => {
+  const { confirming, charged, confirmed } = timestamps;
+  // scheduled orders
+  if (isScheduled && confirmed) return confirmed;
+  // orders with online payment (and fraud prevention)
+  if (charged) return charged;
+  // orders with offline payment
+  if (confirmed) return confirmed;
+  // fallback
+  return confirming;
 };

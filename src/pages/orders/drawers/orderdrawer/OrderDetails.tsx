@@ -1,10 +1,4 @@
-import {
-  Order,
-  OrderItem,
-  OrderStatus,
-  PayableWith,
-  WithId,
-} from '@appjusto/types';
+import { Order, OrderItem, OrderStatus, WithId } from '@appjusto/types';
 import {
   Badge,
   Box,
@@ -22,6 +16,7 @@ import {
   invoiceStatusPTOptions,
   paymentMethodPTOptions,
 } from 'pages/backoffice/utils';
+import { getOrderPaymentChannel } from 'pages/orders/utils';
 import React from 'react';
 import { formatCurrency } from 'utils/formatters';
 import {
@@ -47,11 +42,8 @@ export const OrderDetails = ({ order }: DetailsProps) => {
       : order?.fare?.business?.value;
   const totalPaid = courierPaid + (businessPaid ?? 0);
   const consumerCredits = order?.fare?.credits ?? 0;
-  const isPaymentPendding = order?.paymentMethod
-    ? (
-        ['cash', 'business-credit-card', 'business-debit-card'] as PayableWith[]
-      ).includes(order.paymentMethod)
-    : false;
+  const isPaymentPendding =
+    getOrderPaymentChannel(order?.paymentMethod) === 'offline';
   const statusColor =
     order?.fare?.business?.status && order?.fare?.business?.status !== 'paid'
       ? 'red'
