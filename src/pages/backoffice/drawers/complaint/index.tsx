@@ -147,7 +147,7 @@ export const ComplaintDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               value={complaint?.createdBy.id ?? 'N/E'}
               valueLink={
                 complaint?.createdBy
-                  ? `/backoffice/couriers/${complaint.createdBy}`
+                  ? `/backoffice/couriers/${complaint.createdBy.id}`
                   : undefined
               }
             />
