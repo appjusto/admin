@@ -44,7 +44,7 @@ interface BusinessBOContextProps {
   lastKeepAlive?: Timestamp;
   contextValidation: BackofficeProfileValidation;
   isLoading: boolean;
-  handleBusinessProfileChange(key: string, value: any): void;
+  handleBusinessProfileChange(key: keyof Business, value: any): void;
   handleBussinesPhonesChange(
     operation: 'add' | 'remove' | 'update' | 'ordering',
     args?: number | { index: number; field: BusinessPhoneField; value: any }
@@ -91,6 +91,7 @@ const businessKeys: (keyof Business)[] = [
   'minHoursForScheduledOrders',
   'reviews',
   'services',
+  'availableAt',
 ];
 interface Props {
   children: React.ReactNode | React.ReactNode[];
@@ -135,7 +136,7 @@ export const BusinessBOProvider = ({ children }: Props) => {
   const [lastKeepAlive, setLastKeepAlive] = React.useState<Timestamp>();
   // handlers
   const handleBusinessProfileChange = React.useCallback(
-    (key: string, value: any) => {
+    (key: keyof Business, value: any) => {
       if (key === 'situation' && value === 'blocked') {
         dispatch({
           type: 'update_business',
@@ -143,6 +144,14 @@ export const BusinessBOProvider = ({ children }: Props) => {
             situation: 'blocked',
             enabled: false,
             status: 'unavailable',
+          },
+        });
+      } else if (key === 'status' && value === 'available') {
+        dispatch({
+          type: 'update_business',
+          payload: {
+            status: 'available',
+            availableAt: null,
           },
         });
       } else dispatch({ type: 'update_business', payload: { [key]: value } });

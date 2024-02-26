@@ -1,22 +1,22 @@
 import { BusinessStatus, CookingTimeMode } from '@appjusto/types';
 import { Box, Flex, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { useContextBusinessBackoffice } from 'app/state/business/businessBOContext';
+import { CustomInput } from 'common/components/form/input/CustomInput';
+import { Timestamp } from 'firebase/firestore';
 import { BusinessAverageCookingTime } from 'pages/delivery-area/BusinessAverageCookingTime';
 import React from 'react';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../generics/SectionTitle';
+import {
+  getAvailableAtMinDate,
+  getStringDateFromTimestamp,
+  getTimestampFromStringDate,
+} from './utils';
 
 export const BusinessLive = () => {
   // context
   const { business, isBusinessOpen, handleBusinessProfileChange } =
     useContextBusinessBackoffice();
-  // state
-  const [status, setStatus] = React.useState<BusinessStatus>(
-    business?.status ?? 'unavailable'
-  );
-  const [isEnabled, setIsEnabled] = React.useState(
-    business?.enabled ? 'true' : 'false'
-  );
   // handlers
   const handleCookingTimeMode = (mode: CookingTimeMode) => {
     handleBusinessProfileChange('settings', {
@@ -26,21 +26,10 @@ export const BusinessLive = () => {
   };
   // side effects
   React.useEffect(() => {
-    if (business?.status) setStatus(business.status);
-  }, [business?.status]);
-  React.useEffect(() => {
     if (!business?.settings) {
       handleBusinessProfileChange('settings', { cookingTimeMode: 'manual' });
     }
   }, [business?.settings, handleBusinessProfileChange]);
-  React.useEffect(() => {
-    if (business?.enabled !== undefined)
-      setIsEnabled(business.enabled.toString());
-  }, [business?.enabled]);
-  React.useEffect(() => {
-    handleBusinessProfileChange('status', status);
-    handleBusinessProfileChange('enabled', isEnabled === 'true' ? true : false);
-  }, [status, isEnabled, handleBusinessProfileChange]);
   // UI
   return (
     <Box>
@@ -85,22 +74,41 @@ export const BusinessLive = () => {
       <SectionTitle>{t('Fechamento de emergência:')}</SectionTitle>
       <Text fontSize="15px" lineHeight="21px">
         {t(
-          'O restaurante ficará fechado até que o fechamento de emergência seja desativado'
+          'O restaurante ficará fechado até a data de retorno definida, ou até que o fechamento de emergência seja desativado'
         )}
       </Text>
       <RadioGroup
-        mt="2"
-        onChange={(value: BusinessStatus) => setStatus(value)}
-        value={status}
+        mt="4"
+        onChange={(value: BusinessStatus) =>
+          handleBusinessProfileChange('status', value)
+        }
+        value={business?.status ?? 'unavailable'}
         color="black"
       >
-        <Flex flexDir="column" justifyContent="flex-start">
-          <Radio mt="2" value="available">
-            {t('Fechamento desativado')}
-          </Radio>
-          <Radio mt="2" value="unavailable">
-            {t('Fechamento ativado')}
-          </Radio>
+        <Flex flexDir="column" justifyContent="start" gap="2">
+          <Radio value="available">{t('Fechamento desativado')}</Radio>
+          <Radio value="unavailable">{t('Fechamento ativado')}</Radio>
+          <Box p="4" border="1px solid grey" borderRadius="lg">
+            <Text fontSize="sm">Data de retorno definida:</Text>
+            <CustomInput
+              mt="2"
+              maxW="160px"
+              type="date"
+              id="availableAt"
+              value={getStringDateFromTimestamp(
+                business?.availableAt as Timestamp
+              )}
+              onChange={(event) => {
+                handleBusinessProfileChange(
+                  'availableAt',
+                  getTimestampFromStringDate(event.target.value)
+                );
+              }}
+              min={getAvailableAtMinDate()}
+              label={t('Data de retorno')}
+              isDisabled={business?.status === 'available'}
+            />
+          </Box>
         </Flex>
       </RadioGroup>
       <SectionTitle>{t('Visibilidade no marketplace:')}</SectionTitle>
@@ -111,8 +119,10 @@ export const BusinessLive = () => {
       </Text>
       <RadioGroup
         mt="2"
-        onChange={(value) => setIsEnabled(value.toString())}
-        value={isEnabled}
+        onChange={(value) =>
+          handleBusinessProfileChange('enabled', value === 'true')
+        }
+        value={business?.enabled ? 'true' : 'false'}
         color="black"
       >
         <Flex flexDir="column" justifyContent="flex-start">
