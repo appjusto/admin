@@ -69,8 +69,17 @@ const getOrderExtrasValueSerialazed = (fare?: Fare) => {
   return { extras: serializeValue(result), extrasNumber: result };
 };
 
+export const getPlacedFromLabel = (placedFrom?: Order['placedFrom']) => {
+  let label = 'N/E';
+  if (placedFrom === 'mobile') label = 'app';
+  else if (placedFrom === 'web') label = 'web';
+  else if (placedFrom === 'web-direct') label = 'link direto';
+  return label;
+};
+
 const headers = [
   { label: 'ID', key: 'id' },
+  { label: 'Criado via', key: 'placedFrom' },
   { label: 'Criado em', key: 'createdAt' },
   { label: 'Agendado para', key: 'scheduledTo' },
   { label: 'Entregue em', key: 'delivered' },
@@ -92,6 +101,7 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
 
   const data = orders.map((order) => {
     // helpers
+    const placedFrom = getPlacedFromLabel(order.placedFrom);
     const createdAt = getDateAndHour(
       order.scheduledTo
         ? order.timestamps.scheduled
@@ -125,6 +135,7 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
     const consumerEmail = order.consumer.email ?? 'Não informado';
     return {
       id: order.code,
+      placedFrom,
       createdAt,
       scheduledTo,
       delivered,
