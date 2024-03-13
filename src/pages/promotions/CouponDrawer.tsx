@@ -17,6 +17,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useCoupon } from 'app/api/coupon/useCoupon';
+import { useGetCoupon } from 'app/api/coupon/useGetCoupon';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -53,9 +54,13 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   } = useCoupon();
   const { business } = useContextBusiness();
   // state
-  const [type, setType] = React.useState<CouponType>(
-    queryType ?? 'food-discount'
-  );
+  // TODO: crair getCoupon no pai!?
+  const coupon = useGetCoupon(couponId);
+  console.log(coupon);
+
+  const initialType = queryType ?? 'food-discount';
+
+  const [type, setType] = React.useState<CouponType>(initialType);
   const [discount, setDiscount] = React.useState(0);
   const [minOrderValue, setMinOrderValue] = React.useState(0);
   const [usagePolicy, setUsagePolicy] =
@@ -67,7 +72,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const isNew = couponId === 'new';
   const isLoading = isNew ? createResult.isLoading : updateResult.isLoading;
   // handlers
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!business?.id) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -107,7 +112,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           minOrderValue,
           usagePolicy,
         };
-        createCoupon(changes);
+        await createCoupon(changes);
       } else {
         const changes: Pick<
           Coupon,
@@ -119,13 +124,13 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           minOrderValue,
           usagePolicy,
         };
-        updateCoupon({ couponId, changes });
+        await updateCoupon({ couponId, changes });
       }
       onClose();
     } catch (error) {}
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!couponId) {
       return dispatchAppRequestResult({
         status: 'error',
@@ -135,10 +140,18 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
-    deleteCoupon(couponId);
+    await deleteCoupon(couponId);
+    onClose();
   };
   // side effects
-  React.useEffect(() => {}, []);
+  React.useEffect(() => {
+    if (!coupon) return;
+    setType(coupon.type);
+    setUsagePolicy(coupon.usagePolicy);
+    setDiscount(coupon.discount ?? 0);
+    setMinOrderValue(coupon.minOrderValue ?? 0);
+    setCode(coupon.code);
+  }, [coupon]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -208,7 +221,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     </Text>
                   </Box>
                   <Box w="full">
-                    <Radio value="renewabled">{t('Renovável')}</Radio>
+                    <Radio value="renewable">{t('Renovável')}</Radio>
                     <Text ml="8" fontSize="xs" color="gray.700">
                       {t(
                         'Sempre que for reativado, todos os clientes poderão usar este cupom mais uma vez'

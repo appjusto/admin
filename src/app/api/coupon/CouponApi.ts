@@ -1,9 +1,10 @@
 import { Coupon, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
-import { documentsAs } from 'core/fb';
+import { documentAs, documentsAs } from 'core/fb';
 import {
   addDoc,
   deleteDoc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -44,6 +45,13 @@ export default class CouponApi {
     return unsubscribe;
   }
 
+  async getCoupon(couponId: string) {
+    const docRef = this.refs.getCouponRef(couponId);
+    const snapshot = await getDoc(docRef);
+    if (!snapshot.exists()) return null;
+    return documentAs<Coupon>(snapshot);
+  }
+
   async createCoupon(
     data: Pick<
       Coupon,
@@ -65,24 +73,21 @@ export default class CouponApi {
     await addDoc(this.refs.getCouponsRef(), coupon);
   }
 
-  async updateCoupon(
-    couponId: string,
-    changes: Pick<
-      Coupon,
-      'type' | 'code' | 'discount' | 'minOrderValue' | 'usagePolicy'
-    >
-  ) {
+  async updateCoupon(couponId: string, changes: Partial<Coupon>) {
     const fullChanges: Partial<Coupon> = {
       ...changes,
       updatedAt: serverTimestamp() as Timestamp,
     };
-    if (changes.usagePolicy === 'renewable') {
+    if (changes.usagePolicy === 'renewable' && changes.enabled) {
       fullChanges.enabledAt = serverTimestamp() as Timestamp;
     }
     await updateDoc(this.refs.getCouponRef(couponId), fullChanges);
   }
 
   async deleteCoupon(couponId: string) {
-    await deleteDoc(this.refs.getCouponRef(couponId));
+    console.log('deleteCoupon id: ', couponId);
+    const docRef = this.refs.getCouponRef(couponId);
+    console.log(docRef);
+    await deleteDoc(docRef);
   }
 }

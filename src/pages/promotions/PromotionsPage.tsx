@@ -12,6 +12,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { t } from 'utils/i18n';
+import { CouponCard } from './CouponCard';
 import { CouponDrawer } from './CouponDrawer';
 
 const PromotionsPage = () => {
@@ -71,10 +72,10 @@ const PromotionsPage = () => {
           'Aqui você pode editar, ativar ou desativar os seus cupons, quando quiser'
         )}
       </Text>
-      <Flex>
+      <Flex mt="6">
         {coupons?.length ? (
           coupons.map((coupon) => {
-            return <p key={coupon.id}>{coupon.code}</p>;
+            return <CouponCard key={coupon.id} coupon={coupon} />;
           })
         ) : (
           <p>nenhum cupom adicionado</p>

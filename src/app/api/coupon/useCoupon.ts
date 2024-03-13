@@ -6,7 +6,7 @@ export const useCoupon = () => {
   // context
   const api = useContextApi();
   // mutations
-  const { mutate: createCoupon, mutationResult: createResult } =
+  const { mutateAsync: createCoupon, mutationResult: createResult } =
     useCustomMutation(
       async (
         data: Pick<
@@ -23,24 +23,19 @@ export const useCoupon = () => {
       },
       'createCoupon'
     );
-  const { mutate: updateCoupon, mutationResult: updateResult } =
+  const { mutateAsync: updateCoupon, mutationResult: updateResult } =
     useCustomMutation(
-      async (data: {
-        couponId: string;
-        changes: Pick<
-          Coupon,
-          'type' | 'code' | 'discount' | 'minOrderValue' | 'usagePolicy'
-        >;
-      }) => {
+      async (data: { couponId: string; changes: Partial<Coupon> }) => {
         const { couponId, changes } = data;
         return api.coupon().updateCoupon(couponId, changes);
       },
       'createCoupon'
     );
-  const { mutate: deleteCoupon, mutationResult: deleteResult } =
+  const { mutateAsync: deleteCoupon, mutationResult: deleteResult } =
     useCustomMutation(async (couponId: string) => {
+      console.log(couponId);
       return api.coupon().deleteCoupon(couponId);
-    }, 'createCoupon');
+    }, 'deleteCoupon');
   // return
   return {
     createCoupon,
