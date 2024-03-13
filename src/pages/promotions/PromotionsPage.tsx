@@ -1,6 +1,6 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { useObserveBusinessCoupons } from 'app/api/coupon/useObserveBusinessCoupons';
 import { useContextBusiness } from 'app/state/business/context';
-import { useContextAppRequests } from 'app/state/requests/context';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -12,24 +12,17 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { t } from 'utils/i18n';
-import { PromotionDrawer } from './PromotionDrawer';
+import { CouponDrawer } from './CouponDrawer';
 
 const PromotionsPage = () => {
   // context
   const { path } = useRouteMatch();
   const history = useHistory();
-  const { dispatchAppRequestResult } = useContextAppRequests();
   const { business } = useContextBusiness();
-  // queries & mutations
-
   // state
-
-  // helpers
-
+  const coupons = useObserveBusinessCoupons(business?.id);
   // handlers
   const closeDrawerHandler = () => history.replace(path);
-  // side effects
-
   // UI
   return (
     <Box>
@@ -78,9 +71,18 @@ const PromotionsPage = () => {
           'Aqui você pode editar, ativar ou desativar os seus cupons, quando quiser'
         )}
       </Text>
+      <Flex>
+        {coupons?.length ? (
+          coupons.map((coupon) => {
+            return <p key={coupon.id}>{coupon.code}</p>;
+          })
+        ) : (
+          <p>nenhum cupom adicionado</p>
+        )}
+      </Flex>
       <Switch>
-        <Route path={`${path}/:promotionId`}>
-          <PromotionDrawer isOpen onClose={closeDrawerHandler} />
+        <Route path={`${path}/:couponId`}>
+          <CouponDrawer isOpen onClose={closeDrawerHandler} />
         </Route>
       </Switch>
     </Box>

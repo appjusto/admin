@@ -33,6 +33,7 @@ import CardsApi from './cards/CardsApi';
 import ChatApi from './chat/ChatApi';
 import ComplaintsApi from './complaints/ComplaintsApi';
 import ConsumerApi from './consumer/CosumerApi';
+import CouponApi from './coupon/CouponApi';
 import CourierApi from './courier/CourierApi';
 import FilesApi from './FilesApi';
 import FirebaseRefs from './FirebaseRefs';
@@ -85,6 +86,7 @@ export default class Api {
   private _banners: BannersApi;
   private _fleet: FleetApi;
   private _complaints: ComplaintsApi;
+  private _coupon: CouponApi;
 
   constructor(config: ApiConfig) {
     if (!Api.app) {
@@ -153,6 +155,7 @@ export default class Api {
     this._fleet = new FleetApi(this._refs);
     this._areas = new AreasApi(this._refs);
     this._complaints = new ComplaintsApi(this._refs);
+    this._coupon = new CouponApi(this._refs);
   }
 
   measurement() {
@@ -237,5 +240,9 @@ export default class Api {
 
   complaints() {
     return this._complaints;
+  }
+
+  coupon() {
+    return this._coupon;
   }
 }

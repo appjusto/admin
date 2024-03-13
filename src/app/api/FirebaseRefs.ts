@@ -141,6 +141,9 @@ export default class FirebaseRefs {
   getBusinessMarketPlaceRef = (businessId: string) =>
     doc(this.getBusinessPrivateRef(businessId), 'marketplace');
 
+  // coupons
+  getCouponsRef = () => collection(this.firestore, 'coupons');
+  getCouponRef = (couponId: string) => doc(this.getCouponsRef(), couponId);
   // staff
   getStaffsRef = () => collection(this.firestore, 'staff');
   getStaffRef = (staffId: string) => doc(this.getStaffsRef(), staffId);

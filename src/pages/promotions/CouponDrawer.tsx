@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useCoupon } from 'app/api/coupon/useCoupon';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -32,16 +33,24 @@ interface BaseDrawerProps {
 }
 
 type Params = {
-  promotionId: string;
+  couponId: string;
 };
 
-export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
+export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const query = useQuery();
   const queryType = query.get('type') as CouponType | null;
-  console.log(queryType);
-  const { promotionId } = useParams<Params>();
+
+  const { couponId } = useParams<Params>();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const {
+    createCoupon,
+    createResult,
+    updateCoupon,
+    updateResult,
+    deleteCoupon,
+    deleteResult,
+  } = useCoupon();
   const { business } = useContextBusiness();
   // state
   const [type, setType] = React.useState<CouponType>(
@@ -52,10 +61,11 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [usagePolicy, setUsagePolicy] =
     React.useState<CouponUsagePolicy>('once');
   const [code, setCode] = React.useState('');
-  const [enabled, setEnabled] = React.useState(false);
+  // const [enabled, setEnabled] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
-  const isNew = promotionId === 'new';
+  const isNew = couponId === 'new';
+  const isLoading = isNew ? createResult.isLoading : updateResult.isLoading;
   // handlers
   const handleSubmit = () => {
     if (!business?.id) {
@@ -67,7 +77,7 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
-    if (!promotionId) {
+    if (!couponId) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'promotion-submit-error',
@@ -77,23 +87,55 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
       });
     }
     try {
-      const changes: Partial<Coupon> = {
-        type,
-        code,
-        discount,
-        minOrderValue,
-        usagePolicy,
-      };
       if (isNew) {
-        const createdBy = {
-          flavor: 'business',
-          id: business.id,
-        } as Coupon['createdBy'];
-        changes.createdBy = createdBy;
-        console.log(changes);
+        const changes: Pick<
+          Coupon,
+          | 'createdBy'
+          | 'type'
+          | 'code'
+          | 'discount'
+          | 'minOrderValue'
+          | 'usagePolicy'
+        > = {
+          createdBy: {
+            flavor: 'business',
+            id: business.id,
+          },
+          type,
+          code,
+          discount,
+          minOrderValue,
+          usagePolicy,
+        };
+        createCoupon(changes);
       } else {
+        const changes: Pick<
+          Coupon,
+          'type' | 'code' | 'discount' | 'minOrderValue' | 'usagePolicy'
+        > = {
+          type,
+          code,
+          discount,
+          minOrderValue,
+          usagePolicy,
+        };
+        updateCoupon({ couponId, changes });
       }
+      onClose();
     } catch (error) {}
+  };
+
+  const handleDelete = () => {
+    if (!couponId) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'promotion-submit-error',
+        message: {
+          title: 'Não foi possível encontrar as informaçoes do cupom.',
+        },
+      });
+    }
+    deleteCoupon(couponId);
   };
   // side effects
   React.useEffect(() => {}, []);
@@ -108,11 +150,7 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           }}
         >
           <DrawerContent mt={{ base: '16', lg: '0' }}>
-            <DrawerCloseButton
-              // bg="green.500"
-              mr="12px"
-              _focus={{ outline: 'none' }}
-            />
+            <DrawerCloseButton mr="12px" _focus={{ outline: 'none' }} />
             <DrawerHeader>
               <Text
                 color="black"
@@ -240,7 +278,7 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   p="6"
                 >
                   <Text color="red">
-                    {t(`Tem certeza que deseja excluir esta área?`)}
+                    {t(`Tem certeza que deseja excluir este cupom?`)}
                   </Text>
                   <HStack mt="4" spacing={4}>
                     <Button
@@ -248,14 +286,14 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       fontSize="15px"
                       onClick={() => setIsDeleting(false)}
                     >
-                      {t(`Manter área`)}
+                      {t(`Manter cupom`)}
                     </Button>
                     <Button
                       width="full"
                       variant="danger"
                       fontSize="15px"
-                      // onClick={() => deleteArea(areaId)}
-                      // isLoading={deleteAreaResult.isLoading}
+                      onClick={handleDelete}
+                      isLoading={deleteResult.isLoading}
                       loadingText={t('Excluindo')}
                     >
                       {t(`Excluir`)}
@@ -269,7 +307,7 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                     fontSize="15px"
                     type="submit"
                     loadingText={t('Salvando')}
-                    // isLoading={updateAreaResult.isLoading}
+                    isLoading={isLoading}
                   >
                     {t('Salvar alterações')}
                   </Button>
@@ -280,7 +318,7 @@ export const PromotionDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       variant="dangerLight"
                       onClick={() => setIsDeleting(true)}
                     >
-                      {t('Excluir área')}
+                      {t('Excluir cupom')}
                     </Button>
                   )}
                 </HStack>
