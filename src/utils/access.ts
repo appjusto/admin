@@ -59,6 +59,7 @@ const adminManagerPages = [
   'delivery-area',
   'orders-history',
   'finances',
+  'promotions',
   'business-profile',
   'operation',
   'banking-information',

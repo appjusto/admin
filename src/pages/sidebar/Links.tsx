@@ -36,6 +36,7 @@ export const Links = (props: BoxProps) => {
           label={t('Histórico de pedidos')}
         />
         <LinkItem to={`${url}/finances`} label={t('Financeiro')} />
+        <LinkItem to={`${url}/promotions`} label={t('Promoções')} />
       </Box>
       <Box mt="6">
         <Text ml="3" mb="2" fontSize="xs" fontWeight="700" color="gray.600">

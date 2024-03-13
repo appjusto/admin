@@ -57,6 +57,9 @@ const OrdersHistoryPage = React.lazy(
 const FinancesPage = React.lazy(
   () => import(/* webpackPrefetch: true */ 'pages/finances/FinancesPage')
 );
+const PromotionsPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ 'pages/promotions/PromotionsPage')
+);
 const BankingInformation = React.lazy(
   () =>
     import(
@@ -170,6 +173,10 @@ const Home = () => {
                 <AdminAccessRoute
                   path={`${path}/finances`}
                   component={FinancesPage}
+                />
+                <AdminAccessRoute
+                  path={`${path}/promotions`}
+                  component={PromotionsPage}
                 />
                 <AdminAccessRoute
                   path={`${path}/banking-information`}
