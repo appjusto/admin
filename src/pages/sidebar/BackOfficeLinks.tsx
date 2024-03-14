@@ -26,6 +26,7 @@ export const BackOfficeLinks = (props: BoxProps) => {
         to={`${url}/consumers`}
         label={t('Consumidores')}
       />
+      <LinkItem type="backoffice" to={`${url}/coupons`} label={t('Cupons')} />
       <LinkItem
         type="backoffice"
         to={`${url}/complaints`}

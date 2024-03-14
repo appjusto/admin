@@ -5,6 +5,7 @@ type BackofficeAccess = {
   'couriers': string;
   'businesses': string;
   'consumers': string;
+  'coupons': string;
   'complaints': string;
   'banners': string;
   'invoices': string;
@@ -23,6 +24,7 @@ const backofficeAccess = {
   'couriers': 'couriers',
   'businesses': 'businesses',
   'consumers': 'consumers',
+  'coupons': 'consumers',
   'complaints': 'complaints',
   'banners': 'banners',
   'invoices': 'invoices',
@@ -43,6 +45,7 @@ type AdminAccess = {
   'delivery-area': string;
   'orders-history': string;
   'finances': string;
+  'coupons': string;
   'business-profile': string;
   'operation': string;
   'banking-information': string;
@@ -59,6 +62,7 @@ const adminManagerPages = [
   'delivery-area',
   'orders-history',
   'finances',
+  'coupons',
   'promotions',
   'business-profile',
   'operation',

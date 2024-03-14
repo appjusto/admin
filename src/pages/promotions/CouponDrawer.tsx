@@ -9,10 +9,12 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
+  Flex,
   HStack,
   Radio,
   RadioGroup,
   Stack,
+  Switch,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -24,7 +26,7 @@ import { CurrencyInput } from 'common/components/form/input/currency-input/Curre
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
 
@@ -39,6 +41,9 @@ type Params = {
 
 export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
+  const { path } = useRouteMatch();
+  const isBackoffice = path.includes('/backoffice');
+
   const query = useQuery();
   const queryType = query.get('type') as CouponType | null;
 
@@ -54,7 +59,6 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   } = useCoupon();
   const { business } = useContextBusiness();
   // state
-  // TODO: crair getCoupon no pai!?
   const coupon = useGetCoupon(couponId);
   console.log(coupon);
 
@@ -66,14 +70,14 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const [usagePolicy, setUsagePolicy] =
     React.useState<CouponUsagePolicy>('once');
   const [code, setCode] = React.useState('');
-  // const [enabled, setEnabled] = React.useState(false);
+  const [enabled, setEnabled] = React.useState(true);
   const [isDeleting, setIsDeleting] = React.useState(false);
   // helpers
   const isNew = couponId === 'new';
   const isLoading = isNew ? createResult.isLoading : updateResult.isLoading;
   // handlers
   const handleSubmit = async () => {
-    if (!business?.id) {
+    if (!isBackoffice && !business?.id) {
       return dispatchAppRequestResult({
         status: 'error',
         requestId: 'promotion-submit-error',
@@ -103,8 +107,8 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
           | 'usagePolicy'
         > = {
           createdBy: {
-            flavor: 'business',
-            id: business.id,
+            flavor: isBackoffice ? 'platform' : 'business',
+            id: isBackoffice ? null : business!.id,
           },
           type,
           code,
@@ -114,15 +118,13 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         };
         await createCoupon(changes);
       } else {
-        const changes: Pick<
-          Coupon,
-          'type' | 'code' | 'discount' | 'minOrderValue' | 'usagePolicy'
-        > = {
+        const changes: Partial<Coupon> = {
           type,
           code,
           discount,
           minOrderValue,
           usagePolicy,
+          enabled,
         };
         await updateCoupon({ couponId, changes });
       }
@@ -151,6 +153,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setDiscount(coupon.discount ?? 0);
     setMinOrderValue(coupon.minOrderValue ?? 0);
     setCode(coupon.code);
+    setEnabled(coupon.enabled);
   }, [coupon]);
   //UI
   return (
@@ -279,6 +282,28 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 onChange={(ev) => setCode(ev.target.value)}
                 isRequired
               />
+              {isBackoffice && couponId !== 'new' ? (
+                <>
+                  <SectionTitle mt="6">{t('Status')}</SectionTitle>
+                  <Text mt="1" fontSize="xs">
+                    {t(
+                      'Defina se o cupom estará disponível para uso dos consumidores'
+                    )}
+                  </Text>
+                  <Flex mt="4" gap="4" alignItems="center">
+                    <Switch
+                      isChecked={enabled}
+                      onChange={(ev) => {
+                        ev.stopPropagation();
+                        setEnabled(ev.target.checked);
+                      }}
+                    />
+                    <Text color="black">
+                      {t(enabled ? 'Disponível' : 'Indisponível')}
+                    </Text>
+                  </Flex>
+                </>
+              ) : null}
             </DrawerBody>
             <DrawerFooter borderTop="1px solid #F2F6EA">
               {isDeleting ? (

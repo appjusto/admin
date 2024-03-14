@@ -72,7 +72,7 @@ const PromotionsPage = () => {
           'Aqui você pode editar, ativar ou desativar os seus cupons, quando quiser'
         )}
       </Text>
-      <Flex mt="6">
+      <Flex mt="6" flexWrap="wrap" gap="4">
         {coupons?.length ? (
           coupons.map((coupon) => {
             return <CouponCard key={coupon.id} coupon={coupon} />;

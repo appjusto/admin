@@ -17,11 +17,12 @@ const BusinessesPage = React.lazy(
 const ConsumersPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './consumers')
 );
-
+const CouponsPage = React.lazy(
+  () => import(/* webpackPrefetch: true */ './coupons')
+);
 const BannersPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './banners')
 );
-
 const InvoicesPage = React.lazy(
   () => import(/* webpackPrefetch: true */ './invoices')
 );
@@ -68,6 +69,7 @@ const BackOffice = () => {
             component={BusinessesPage}
           />
           <BOAccessRoute path={`${path}/consumers`} component={ConsumersPage} />
+          <BOAccessRoute path={`${path}/coupons`} component={CouponsPage} />
           <BOAccessRoute path={`${path}/banners`} component={BannersPage} />
           <BOAccessRoute path={`${path}/invoices`} component={InvoicesPage} />
           <BOAccessRoute path={`${path}/ledger`} component={LedgerPage} />

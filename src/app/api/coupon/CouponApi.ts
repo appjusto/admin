@@ -4,11 +4,15 @@ import { documentAs, documentsAs } from 'core/fb';
 import {
   addDoc,
   deleteDoc,
+  DocumentData,
   getDoc,
+  limit,
   onSnapshot,
   orderBy,
   query,
+  QueryDocumentSnapshot,
   serverTimestamp,
+  startAt,
   Timestamp,
   Unsubscribe,
   updateDoc,
@@ -20,6 +24,35 @@ export default class CouponApi {
   constructor(private refs: FirebaseRefs) {}
 
   // firestore
+  observeCoupons(
+    resultHandler: (
+      coupons: WithId<Coupon>[],
+      last?: QueryDocumentSnapshot<DocumentData>
+    ) => void,
+    startAfter?: QueryDocumentSnapshot<DocumentData>,
+    code?: string
+  ): Unsubscribe {
+    let q = query(this.refs.getCouponsRef(), limit(20));
+    if (startAfter) q = query(q, startAt(startAfter));
+    if (code) q = query(q, where('code', '==', code));
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const last =
+          querySnapshot.docs.length > 0
+            ? querySnapshot.docs[querySnapshot.size - 1]
+            : undefined;
+        resultHandler(documentsAs<Coupon>(querySnapshot.docs), last);
+      },
+      (error) => {
+        console.error(error);
+        Sentry.captureException(error);
+      }
+    );
+    // returns the unsubscribe function
+    return unsubscribe;
+  }
+
   observeBusinessCoupons(
     businessId: string,
     resultHandler: (coupons: WithId<Coupon>[]) => void
