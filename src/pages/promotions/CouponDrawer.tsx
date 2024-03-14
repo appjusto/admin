@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { useCoupon } from 'app/api/coupon/useCoupon';
 import { useGetCoupon } from 'app/api/coupon/useGetCoupon';
+import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
@@ -49,6 +50,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
 
   const { couponId } = useParams<Params>();
   const { dispatchAppRequestResult } = useContextAppRequests();
+  const { userAbility } = useContextFirebaseUser();
   const {
     createCoupon,
     createResult,
@@ -60,10 +62,11 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   const { business } = useContextBusiness();
   // state
   const coupon = useGetCoupon(couponId);
-  console.log(coupon);
-
-  const initialType = queryType ?? 'food-discount';
-
+  const initialType: CouponType = queryType
+    ? queryType
+    : isBackoffice
+    ? 'referral'
+    : 'food-discount';
   const [type, setType] = React.useState<CouponType>(initialType);
   const [discount, setDiscount] = React.useState(0);
   const [minOrderValue, setMinOrderValue] = React.useState(0);
@@ -155,6 +158,13 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setCode(coupon.code);
     setEnabled(coupon.enabled);
   }, [coupon]);
+  React.useEffect(() => {
+    if (type === 'referral') {
+      setCode('REFERRAL');
+    } else {
+      setCode('');
+    }
+  }, [type]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
@@ -189,6 +199,9 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 lineHeight="21px"
               >
                 <Stack direction="row" spacing={4}>
+                  {isBackoffice ? (
+                    <Radio value="referral">{t('Referência')}</Radio>
+                  ) : null}
                   <Radio value="delivery-free">{t('Entrega grátis')}</Radio>
                   <Radio value="delivery-discount">
                     {t('Desconto na entrega')}
@@ -281,6 +294,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 value={code}
                 onChange={(ev) => setCode(ev.target.value)}
                 isRequired
+                isDisabled={type === 'referral'}
               />
               {isBackoffice && couponId !== 'new' ? (
                 <>
@@ -305,63 +319,65 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 </>
               ) : null}
             </DrawerBody>
-            <DrawerFooter borderTop="1px solid #F2F6EA">
-              {isDeleting ? (
-                <Box
-                  mt="8"
-                  w="100%"
-                  bg="#FFF8F8"
-                  border="1px solid red"
-                  borderRadius="lg"
-                  p="6"
-                >
-                  <Text color="red">
-                    {t(`Tem certeza que deseja excluir este cupom?`)}
-                  </Text>
-                  <HStack mt="4" spacing={4}>
-                    <Button
-                      width="full"
-                      fontSize="15px"
-                      onClick={() => setIsDeleting(false)}
-                    >
-                      {t(`Manter cupom`)}
-                    </Button>
-                    <Button
-                      width="full"
-                      variant="danger"
-                      fontSize="15px"
-                      onClick={handleDelete}
-                      isLoading={deleteResult.isLoading}
-                      loadingText={t('Excluindo')}
-                    >
-                      {t(`Excluir`)}
-                    </Button>
-                  </HStack>
-                </Box>
-              ) : (
-                <HStack w="100%" spacing={4}>
-                  <Button
-                    width={isNew ? '50%' : 'full'}
-                    fontSize="15px"
-                    type="submit"
-                    loadingText={t('Salvando')}
-                    isLoading={isLoading}
+            {userAbility?.can('update', 'coupons') ? (
+              <DrawerFooter borderTop="1px solid #F2F6EA">
+                {isDeleting ? (
+                  <Box
+                    mt="8"
+                    w="100%"
+                    bg="#FFF8F8"
+                    border="1px solid red"
+                    borderRadius="lg"
+                    p="6"
                   >
-                    {t('Salvar alterações')}
-                  </Button>
-                  {!isNew && (
+                    <Text color="red">
+                      {t(`Tem certeza que deseja excluir este cupom?`)}
+                    </Text>
+                    <HStack mt="4" spacing={4}>
+                      <Button
+                        width="full"
+                        fontSize="15px"
+                        onClick={() => setIsDeleting(false)}
+                      >
+                        {t(`Manter cupom`)}
+                      </Button>
+                      <Button
+                        width="full"
+                        variant="danger"
+                        fontSize="15px"
+                        onClick={handleDelete}
+                        isLoading={deleteResult.isLoading}
+                        loadingText={t('Excluindo')}
+                      >
+                        {t(`Excluir`)}
+                      </Button>
+                    </HStack>
+                  </Box>
+                ) : (
+                  <HStack w="100%" spacing={4}>
                     <Button
-                      width="full"
+                      width="50%"
                       fontSize="15px"
-                      variant="dangerLight"
-                      onClick={() => setIsDeleting(true)}
+                      type="submit"
+                      loadingText={t('Salvando')}
+                      isLoading={isLoading}
                     >
-                      {t('Excluir cupom')}
+                      {t('Salvar alterações')}
                     </Button>
-                  )}
-                </HStack>
-              )}
-            </DrawerFooter>
+                    {!isNew && userAbility?.can('delete', 'coupons') ? (
+                      <Button
+                        width="50%"
+                        fontSize="15px"
+                        variant="dangerLight"
+                        onClick={() => setIsDeleting(true)}
+                      >
+                        {t('Excluir cupom')}
+                      </Button>
+                    ) : null}
+                  </HStack>
+                )}
+              </DrawerFooter>
+            ) : null}
           </DrawerContent>
         </form>
       </DrawerOverlay>

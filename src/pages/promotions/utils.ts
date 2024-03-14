@@ -5,6 +5,6 @@ export const getCouponTypeLabel = (type: CouponType) => {
   if (type === 'delivery-free') label = 'Entrega grátis';
   else if (type === 'delivery-discount') label = 'Desconto na entrega';
   else if (type === 'food-discount') label = 'Desconto nos produtos';
-  else if (type === 'platform-discount') label = 'Desconto da plataforma';
+  else if (type === 'referral') label = 'Desconto da plataforma';
   return label;
 };

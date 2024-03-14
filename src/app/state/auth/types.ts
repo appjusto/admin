@@ -20,6 +20,7 @@ export type Entities =
   | 'menu'
   | 'couriers'
   | 'consumers'
+  | 'coupons'
   | 'chats'
   | 'complaints'
   | 'invoices'

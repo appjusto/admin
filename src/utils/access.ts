@@ -24,7 +24,7 @@ const backofficeAccess = {
   'couriers': 'couriers',
   'businesses': 'businesses',
   'consumers': 'consumers',
-  'coupons': 'consumers',
+  'coupons': 'coupons',
   'complaints': 'complaints',
   'banners': 'banners',
   'invoices': 'invoices',

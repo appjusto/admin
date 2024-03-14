@@ -110,7 +110,7 @@ const CouponsPage = () => {
             </HStack>
           </CheckboxGroup>*/}
         </HStack>
-        {userAbility?.can('create', 'areas') && (
+        {userAbility?.can('create', 'coupons') && (
           <CustomButton mt="0" label={t('Criar cupom')} link={`${path}/new`} />
         )}
       </Flex>

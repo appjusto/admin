@@ -169,6 +169,7 @@ export const permissionsPTOptions = {
   orders: 'Pedidos',
   couriers: 'Entregadores',
   consumers: 'Consumidores',
+  coupons: 'Cupons',
   businesses: 'Restaurantes',
   account_manager: 'Ger. Contas',
   menu: 'Cardápios',
