@@ -3,6 +3,7 @@ import { Box, Button, Flex, HStack, Text } from '@chakra-ui/react';
 import { useObserveCoupons } from 'app/api/coupon/useObserveCoupons';
 import { useContextFirebaseUser } from 'app/state/auth/context';
 import { ClearFiltersButton } from 'common/components/backoffice/ClearFiltersButton';
+import { FilterText } from 'common/components/backoffice/FilterText';
 import { CustomButton } from 'common/components/buttons/CustomButton';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CouponDrawer } from 'pages/promotions/CouponDrawer';
@@ -13,6 +14,8 @@ import { t } from 'utils/i18n';
 import PageHeader from '../../PageHeader';
 import { CouponsTable } from './CouponsTable';
 
+type Status = 'enabled' | 'disabled' | 'all';
+
 const CouponsPage = () => {
   // context
   const { path } = useRouteMatch();
@@ -20,8 +23,12 @@ const CouponsPage = () => {
   const { userAbility } = useContextFirebaseUser();
   // state
   const [dateTime, setDateTime] = React.useState('');
+  const [status, setStatus] = React.useState<Status>('all');
   const [code, setCode] = React.useState('');
-  const { coupons, fetchNextPage } = useObserveCoupons(code);
+  const { coupons, fetchNextPage } = useObserveCoupons(
+    code,
+    status === 'all' ? undefined : status === 'enabled'
+  );
   // handlers
   const closeDrawerHandler = () => {
     history.replace(path);
@@ -57,21 +64,25 @@ const CouponsPage = () => {
       <Flex
         mt="8"
         w="100%"
-        pb="2"
         justifyContent="space-between"
         borderBottom="1px solid #C8D7CB"
       >
         <HStack spacing={4} overflowX="auto">
-          {/* <FilterText
-            isActive={!isBlocked}
+          <FilterText
+            isActive={status === 'all'}
             label={t('Todos')}
-            onClick={() => setIsBlocked(false)}
+            onClick={() => setStatus('all')}
           />
           <FilterText
-            isActive={isBlocked}
-            label={t('Bloqueados')}
-            onClick={() => setIsBlocked(true)}
-          /> */}
+            isActive={status === 'enabled'}
+            label={t('Ativados')}
+            onClick={() => setStatus('enabled')}
+          />
+          <FilterText
+            isActive={status === 'disabled'}
+            label={t('Desativados')}
+            onClick={() => setStatus('disabled')}
+          />
         </HStack>
         <ClearFiltersButton clearFunction={clearFilters} />
       </Flex>

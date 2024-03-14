@@ -5,7 +5,7 @@ import React from 'react';
 
 const initialMap = new Map();
 
-export const useObserveCoupons = (code?: string) => {
+export const useObserveCoupons = (code?: string, enabled?: boolean) => {
   // context
   const api = useContextApi();
   // state
@@ -33,10 +33,12 @@ export const useObserveCoupons = (code?: string) => {
         if (last) setLastDoc(last);
       },
       startAfter,
-      code
+      'platform',
+      code,
+      enabled
     );
     return () => unsub();
-  }, [api, startAfter, code]);
+  }, [api, startAfter, code, enabled]);
   React.useEffect(() => {
     setCoupons(
       Array.from(couponsMap.values()).reduce(

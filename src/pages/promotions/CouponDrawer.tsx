@@ -287,7 +287,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   <SectionTitle mt="6">{t('Status')}</SectionTitle>
                   <Text mt="1" fontSize="xs">
                     {t(
-                      'Defina se o cupom estará disponível para uso dos consumidores'
+                      'Defina se o cupom estará ativo para uso dos consumidores'
                     )}
                   </Text>
                   <Flex mt="4" gap="4" alignItems="center">
@@ -299,7 +299,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                       }}
                     />
                     <Text color="black">
-                      {t(enabled ? 'Disponível' : 'Indisponível')}
+                      {t(enabled ? 'Ativado' : 'Desativado')}
                     </Text>
                   </Flex>
                 </>

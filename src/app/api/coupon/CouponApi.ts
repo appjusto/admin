@@ -1,4 +1,4 @@
-import { Coupon, WithId } from '@appjusto/types';
+import { Coupon, Flavor, WithId } from '@appjusto/types';
 import * as Sentry from '@sentry/react';
 import { documentAs, documentsAs } from 'core/fb';
 import {
@@ -30,11 +30,15 @@ export default class CouponApi {
       last?: QueryDocumentSnapshot<DocumentData>
     ) => void,
     startAfter?: QueryDocumentSnapshot<DocumentData>,
-    code?: string
+    flavor?: Flavor,
+    code?: string,
+    enabled?: boolean
   ): Unsubscribe {
     let q = query(this.refs.getCouponsRef(), limit(20));
     if (startAfter) q = query(q, startAt(startAfter));
+    if (flavor) q = query(q, where('createdBy.flavor', '==', flavor));
     if (code) q = query(q, where('code', '==', code));
+    if (enabled !== undefined) q = query(q, where('enabled', '==', enabled));
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
