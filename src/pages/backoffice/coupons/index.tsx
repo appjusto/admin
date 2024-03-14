@@ -35,6 +35,7 @@ const CouponsPage = () => {
   };
 
   const clearFilters = () => {
+    setStatus('all');
     setCode('');
   };
   // side effects

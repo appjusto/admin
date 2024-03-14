@@ -34,7 +34,11 @@ export default class CouponApi {
     code?: string,
     enabled?: boolean
   ): Unsubscribe {
-    let q = query(this.refs.getCouponsRef(), limit(20));
+    let q = query(
+      this.refs.getCouponsRef(),
+      orderBy('createdAt', 'desc'),
+      limit(20)
+    );
     if (startAfter) q = query(q, startAt(startAfter));
     if (flavor) q = query(q, where('createdBy.flavor', '==', flavor));
     if (code) q = query(q, where('code', '==', code));
