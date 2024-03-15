@@ -36,7 +36,7 @@ export default class CouponApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getCouponsRef(),
-      orderBy('createdAt', 'desc'),
+      orderBy('enabledAt', 'desc'),
       limit(20)
     );
     if (startAfter) q = query(q, startAt(startAfter));
@@ -67,7 +67,7 @@ export default class CouponApi {
   ): Unsubscribe {
     let q = query(
       this.refs.getCouponsRef(),
-      orderBy('createdAt', 'desc'),
+      orderBy('enabledAt', 'desc'),
       where('createdBy.id', '==', businessId)
     );
     // returns the unsubscribe function

@@ -159,12 +159,14 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     setEnabled(coupon.enabled);
   }, [coupon]);
   React.useEffect(() => {
+    if (!isBackoffice) return;
+    if (coupon?.code) return;
     if (type === 'referral') {
       setCode('REFERRAL');
     } else {
       setCode('');
     }
-  }, [type]);
+  }, [isBackoffice, coupon?.code, type]);
   //UI
   return (
     <Drawer placement="right" size="lg" onClose={onClose} {...props}>
