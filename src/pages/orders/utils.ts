@@ -1,4 +1,6 @@
 import {
+  Coupon,
+  Fare,
   Order,
   OrderStatusTimestamps,
   PayableWith,
@@ -84,6 +86,22 @@ export const getOrderDestinationNeighborhood = (secondary?: string) => {
   if (!secondary) return 'N/E';
   const neighborhood = secondary.split(',')[0];
   return neighborhood;
+};
+
+export const getBusinessDiscount = (fare?: Fare, coupon?: Coupon | null) => {
+  if (!coupon || coupon.createdBy.flavor !== 'business') return 0;
+  return fare?.discount ?? 0;
+};
+
+export const getBusinessTotalPaid = (
+  fare: Fare | undefined,
+  discount: number
+) => {
+  if (fare?.business?.paid !== undefined) {
+    return fare.business.paid;
+  }
+  const value = fare?.business?.value ?? 0;
+  return value - discount;
 };
 
 export const getOrderPaymentChannel = (

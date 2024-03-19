@@ -133,6 +133,7 @@ export const ledgerEntryOperationPTOptions = {
   'marketing-credit': 'Crédito de marketing',
   'services-debit': 'Débito de serviço contratado',
   'business-subscription': 'Mensalidade do restaurante',
+  'business-coupon': 'Cupom do restaurante',
 };
 
 export const pushStatusPTOptions = {
