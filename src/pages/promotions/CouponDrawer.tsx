@@ -24,12 +24,13 @@ import { useContextFirebaseUser } from 'app/state/auth/context';
 import { useContextBusiness } from 'app/state/business/context';
 import { useContextAppRequests } from 'app/state/requests/context';
 import { CurrencyInput } from 'common/components/form/input/currency-input/CurrencyInput';
-import { CustomInput } from 'common/components/form/input/CustomInput';
+import { CustomPatternInput } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import React from 'react';
 import { useParams, useRouteMatch } from 'react-router-dom';
 import { useQuery } from 'utils/functions';
 import { t } from 'utils/i18n';
+import { couponParser } from './utils';
 
 interface BaseDrawerProps {
   isOpen: boolean;
@@ -288,16 +289,21 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   'Crie e compartilhe esse código com seus clientes, usando suas redes'
                 )}
               </Text>
-              <CustomInput
+              <CustomPatternInput
                 mt="2"
                 id="code"
                 label={t('Código')}
                 placeholder={t('Digite o código do novo cupom. Ex: NOVO25OFF')}
                 value={code}
-                onChange={(ev) => setCode(ev.target.value)}
+                parser={couponParser}
+                onValueChange={setCode}
+                maxLength={14}
                 isRequired
                 isDisabled={type === 'referral'}
               />
+              <Text fontSize="xs" color="gray.700">
+                {code?.length}/14
+              </Text>
               {isBackoffice && couponId !== 'new' ? (
                 <>
                   <SectionTitle mt="6">{t('Status')}</SectionTitle>

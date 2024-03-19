@@ -8,3 +8,8 @@ export const getCouponTypeLabel = (type: CouponType) => {
   else if (type === 'referral') label = 'Desconto da plataforma';
   return label;
 };
+
+export const couponParser = (value: string | undefined) => {
+  if (!value) return '';
+  return value.replace(/[^0-9A-Za-z]/g, '').toUpperCase();
+};

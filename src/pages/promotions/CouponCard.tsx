@@ -33,7 +33,7 @@ export const CouponCard = ({ coupon }: { coupon: WithId<Coupon> }) => {
     <Flex
       p="5"
       w="full"
-      maxW="320px"
+      maxW="310px"
       flexDir="column"
       gap="4"
       border="1px solid #C8D7CB"
