@@ -1,7 +1,7 @@
 import { Coupon, WithId } from '@appjusto/types';
-import { Box, Flex, Link, Switch, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Switch, Text } from '@chakra-ui/react';
 import { useCoupon } from 'app/api/coupon/useCoupon';
-import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { getDateAndHour } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -16,7 +16,6 @@ export const CouponCard = ({ coupon }: { coupon: WithId<Coupon> }) => {
     code,
     type,
     discount,
-    minOrderValue,
     usagePolicy,
     enabled,
     createdAt,
@@ -32,45 +31,73 @@ export const CouponCard = ({ coupon }: { coupon: WithId<Coupon> }) => {
 
   return (
     <Flex
-      p="4"
+      p="5"
+      w="full"
+      maxW="320px"
       flexDir="column"
       gap="4"
       border="1px solid #C8D7CB"
       borderRadius="md"
     >
-      <Flex justifyContent="space-between">
-        <Text fontSize="lg">{code}</Text>
-        <Link
-          as={RouterLink}
-          to={`${path}/${id}`}
-          fontSize="sm"
-          textDecor="underline"
-        >
-          {t('Ver detalhes')}
-        </Link>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text fontSize="lg" color="black">
+          {code}
+        </Text>
+        <Flex gap="2" alignItems="center">
+          <Text fontSize="xs" color="black">
+            {enabled ? t('Ativado') : t('Desativado')}
+          </Text>
+          <Switch
+            isChecked={enabled}
+            onChange={(ev) => {
+              ev.stopPropagation();
+              handleEnabled(ev.target.checked);
+            }}
+          />
+        </Flex>
       </Flex>
-      <Box>
-        <Text>{t('Tipo: ') + getCouponTypeLabel(type)}</Text>
+      <Flex
+        justifyContent="space-between"
+        py="3"
+        borderTop="1px solid #C8D7CB"
+        borderBottom="1px solid #C8D7CB"
+      >
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" color="black">
+            {t('Tipo')}
+          </Text>
+          <Text fontSize="xs">{getCouponTypeLabel(type)}</Text>
+        </Box>
         {discount ? (
-          <Text>{t('Desconto: ') + formatCurrency(discount)}</Text>
+          <Box>
+            <Text fontSize="sm" fontWeight="medium" color="black">
+              {t('Desconto')}
+            </Text>
+            <Text fontSize="xs" textAlign="end">
+              {formatCurrency(discount)}
+            </Text>
+          </Box>
         ) : null}
-        <Text>{t('Valor mím.: ') + formatCurrency(minOrderValue ?? 0)}</Text>
-      </Box>
-      <Box>
-        <Text fontSize="xs">
-          {t('Criado em: ') + getDateAndHour(createdAt)}
-        </Text>
-        <Text fontSize="xs">
-          {t('Atualizado em: ') + getDateAndHour(updatedAt)}
-        </Text>
-      </Box>
-      <Switch
-        isChecked={enabled}
-        onChange={(ev) => {
-          ev.stopPropagation();
-          handleEnabled(ev.target.checked);
-        }}
-      />
+      </Flex>
+      <Flex justifyContent="space-between">
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" color="black">
+            {t('Criado em')}
+          </Text>
+          <Text fontSize="xs">{getDateAndHour(createdAt)}</Text>
+        </Box>
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" color="black">
+            {t('Atualizado em')}
+          </Text>
+          <Text fontSize="xs">{getDateAndHour(updatedAt)}</Text>
+        </Box>
+      </Flex>
+      <Link to={`${path}/${id}`}>
+        <Button w="full" size="sm" variant="outline">
+          {t('Ver detalhes')}
+        </Button>
+      </Link>
     </Flex>
   );
 };

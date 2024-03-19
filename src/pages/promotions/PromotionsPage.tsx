@@ -1,6 +1,7 @@
-import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { useObserveBusinessCoupons } from 'app/api/coupon/useObserveBusinessCoupons';
 import { useContextBusiness } from 'app/state/business/context';
+import { ReactComponent as couponIcon } from 'common/img/coupon.svg';
 import { SectionTitle } from 'pages/backoffice/drawers/generics/SectionTitle';
 import PageHeader from 'pages/PageHeader';
 import React from 'react';
@@ -34,38 +35,71 @@ const PromotionsPage = () => {
         )}
       />
       <SectionTitle>{t('Principais tipos de cupons')}</SectionTitle>
-      <Stack mt="6" direction={{ base: 'column', md: 'row' }}>
-        <Link to={`${path}/new?type=delivery-free`}>
-          <Box p="4" border="1px solid #C8D7CB" borderRadius="lg">
-            <Text fontSize="lg">{t('Entrega grátis')}</Text>
-            <Text fontSize="sm">
-              {t(
-                'Você define um valor mínimo e os pedidos terão entrega grátis'
-              )}
-            </Text>
-          </Box>
+      <Flex mt="6" flexDir={{ base: 'column', md: 'row' }} gap="4">
+        <Link to={`${path}/new?type=delivery-free`} style={{ flex: 1 }}>
+          <Flex
+            p="4"
+            minH="128px"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+            alignItems="center"
+            gap="4"
+            _hover={{ bgColor: 'gray.50' }}
+          >
+            <Icon as={couponIcon} w="8" h="8" minW="8" />
+            <Box experimental_spaceY="2">
+              <Text fontSize="lg">{t('Entrega grátis')}</Text>
+              <Text fontSize="xs">
+                {t(
+                  'Cupons válidos para qualquer pedido, dentro do seu raio de entrega'
+                )}
+              </Text>
+            </Box>
+          </Flex>
         </Link>
-        <Link to={`${path}/new?type=delivery-discount`}>
-          <Box p="4" border="1px solid #C8D7CB" borderRadius="lg">
-            <Text fontSize="lg">{t('Desconto na entrega')}</Text>
-            <Text fontSize="sm">
-              {t(
-                'Você define um valor mínimo e o valor que deseja subsidiar da entrega'
-              )}
-            </Text>
-          </Box>
+        <Link to={`${path}/new?type=delivery-discount`} style={{ flex: 1 }}>
+          <Flex
+            p="4"
+            minH="128px"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+            alignItems="center"
+            gap="4"
+            _hover={{ bgColor: 'gray.50' }}
+          >
+            <Icon as={couponIcon} w="8" h="8" minW="8" />
+            <Box experimental_spaceY="2">
+              <Text fontSize="lg">{t('Desconto na entrega')}</Text>
+              <Text fontSize="xs">
+                {t(
+                  'Você pode definir um valor mínimo em produtos e o quanto deseja subsidiar da entrega'
+                )}
+              </Text>
+            </Box>
+          </Flex>
         </Link>
-        <Link to={`${path}/new?type=food-discount`}>
-          <Box p="4" border="1px solid #C8D7CB" borderRadius="lg">
-            <Text fontSize="lg">{t('Desconto nos produtos')}</Text>
-            <Text fontSize="sm">
-              {t(
-                'Você define um valor mínimo e o desconto que deseja aplicar nos produtos'
-              )}
-            </Text>
-          </Box>
+        <Link to={`${path}/new?type=food-discount`} style={{ flex: 1 }}>
+          <Flex
+            p="4"
+            minH="128px"
+            border="1px solid #C8D7CB"
+            borderRadius="lg"
+            alignItems="center"
+            gap="4"
+            _hover={{ bgColor: 'gray.50' }}
+          >
+            <Icon as={couponIcon} w="8" h="8" minW="8" />
+            <Box experimental_spaceY="2">
+              <Text fontSize="lg">{t('Desconto nos produtos')}</Text>
+              <Text fontSize="xs">
+                {t(
+                  'Você pode definir um valor mínimo em produtos e o desconto que deseja aplicar'
+                )}
+              </Text>
+            </Box>
+          </Flex>
         </Link>
-      </Stack>
+      </Flex>
       <SectionTitle>{t('Seus cupons')}</SectionTitle>
       <Text>
         {t(

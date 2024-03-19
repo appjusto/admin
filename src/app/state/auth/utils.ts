@@ -5,6 +5,7 @@ export const businessOwnerObject = {
   advances: ['c', 'r', 'u'],
   businesses: ['c', 'r', 'u', 'd'],
   chats: ['c', 'r', 'u'],
+  coupons: ['c', 'r', 'u', 'd'],
   invoices: ['r', 'u'],
   managers: ['c', 'r', 'u', 'd'],
   menu: ['c', 'r', 'u', 'd'],
@@ -17,6 +18,7 @@ export const businessManagerObject = {
   advances: ['c', 'r', 'u'],
   businesses: ['r', 'u'],
   chats: ['c', 'r', 'u'],
+  coupons: ['c', 'r', 'u', 'd'],
   invoices: ['r', 'u'],
   managers: [
     { rule: 'c', conditions: { role: 'collaborator' } },
