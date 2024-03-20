@@ -40,9 +40,10 @@ const getOrderNetValueSerialized = (
   fare: Fare | undefined,
   iugu: number,
   appjusto: number,
-  extras: number
+  extras: number,
+  coupon?: Coupon | null
 ) => {
-  let businessValue = getOrderNetValue(fare, iugu, appjusto, extras);
+  let businessValue = getOrderNetValue(fare, iugu, appjusto, extras, coupon);
   return serializeValue(businessValue);
 };
 
@@ -131,7 +132,8 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       order.fare,
       iuguNumber,
       appjustoNumber,
-      extrasNumber
+      extrasNumber,
+      order.coupon
     );
     const paymentMethod = order.paymentMethod
       ? paymentMethodPTOptions[order.paymentMethod]

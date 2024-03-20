@@ -102,6 +102,9 @@ export const getBusinessOrdersBilling = (orders: WithId<Order>[]) => {
       result += extras;
     } else {
       result += order.fare?.business?.value ?? 0;
+      if (order.coupon?.createdBy.flavor === 'business') {
+        result -= order.fare?.discount ?? 0;
+      }
       if (order.fare?.courier?.payee === 'business') {
         result += order.fare.courier.value ?? 0;
       }

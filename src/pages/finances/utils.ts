@@ -1,4 +1,4 @@
-import { Fare, Order, WithId } from '@appjusto/types';
+import { Coupon, Fare, Order, WithId } from '@appjusto/types';
 import { initialBalance } from 'app/api/order/useFetchBusinessOrdersByMonth';
 import { formatCurrency } from 'utils/formatters';
 
@@ -29,18 +29,32 @@ export const isOrdersCount = (fare?: Fare) => {
   );
 };
 
-export const getOrderProductsValue = (fare?: Fare) => {
+export const getOrderProductsValue = (fare?: Fare, coupon?: Coupon | null) => {
   if (!isOrdersCount(fare)) return 0;
-  return fare?.business?.paid ?? 0;
+  let result = fare?.business?.paid ?? 0;
+  if (
+    coupon?.createdBy.flavor === 'business' &&
+    coupon.type !== 'food-discount'
+  ) {
+    result -= fare?.discount ?? 0;
+  }
+  return result;
 };
-export const getOrderDeliveryValue = (fare?: Fare) => {
+export const getOrderDeliveryValue = (fare?: Fare, coupon?: Coupon | null) => {
   if (!isOrdersCount(fare)) return 0;
   let value = 0;
   if (fare?.courier?.payee === 'business') {
     value = fare.courier.value ?? 0;
   }
+  if (
+    coupon?.createdBy.flavor === 'business' &&
+    coupon.type !== 'food-discount'
+  ) {
+    value -= fare?.discount ?? 0;
+  }
   return value;
 };
+
 export const getOrderIuguValue = (fare?: Fare) => {
   // if (!isOrdersCount(fare)) return 0;
   if (!fare?.business?.paid) return 0;
@@ -64,10 +78,11 @@ export const getOrderNetValue = (
   fare: Fare | undefined,
   iugu: number,
   comission: number,
-  extras: number
+  extras: number,
+  coupon?: Coupon | null
 ) => {
   const products = getOrderProductsValue(fare);
-  const delivery = getOrderDeliveryValue(fare);
+  const delivery = getOrderDeliveryValue(fare, coupon);
   // if (!isOrdersCount(fare)) return 0;
   let businessValue = products + delivery;
   // if order was paid
@@ -96,7 +111,7 @@ export const getPeriodBalance = (orders?: WithId<Order>[]) => {
   if (!orders) return initialBalance;
   const balance = orders.reduce((result, order) => {
     // products
-    const productsAmount = getOrderProductsValue(order.fare);
+    const productsAmount = getOrderProductsValue(order.fare, order.coupon);
     // delivery
     const deliveryAmount = getOrderDeliveryValue(order.fare);
     // iugu
@@ -106,7 +121,13 @@ export const getPeriodBalance = (orders?: WithId<Order>[]) => {
     // extras
     const extras = getOrderExtrasValue(order.fare);
     // netValue
-    const netValue = getOrderNetValue(order.fare, iuguCosts, comission, extras);
+    const netValue = getOrderNetValue(
+      order.fare,
+      iuguCosts,
+      comission,
+      extras,
+      order.coupon
+    );
     // item counts
     const count = isOrdersCount(order.fare) ? 1 : 0;
     // result
