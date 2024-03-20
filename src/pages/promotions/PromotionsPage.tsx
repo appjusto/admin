@@ -89,7 +89,7 @@ const PromotionsPage = () => {
               <Text fontSize="lg">{t('Entrega grátis')}</Text>
               <Text fontSize="xs">
                 {t(
-                  'Crie um cupom de entrega grátis, para pedidos dentro do seu raio'
+                  'Crie um cupom de entrega grátis, para pedidos no seu raio de entregas'
                 )}
               </Text>
             </Box>

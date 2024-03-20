@@ -1,4 +1,4 @@
-import { Fare, Order, WithId } from '@appjusto/types';
+import { Coupon, Fare, Order, WithId } from '@appjusto/types';
 import dayjs from 'dayjs';
 import {
   orderStatusPTOptionsForTableItem,
@@ -11,6 +11,7 @@ import {
   getOrderNetValue,
 } from 'pages/finances/utils';
 import { getDateAndHour } from 'utils/functions';
+import { getBusinessDiscount } from '../utils';
 
 const serializeValue = (value: number) =>
   (value / 100).toString().replace('.', ',');
@@ -30,6 +31,10 @@ const getOrderIuguValueSerialized = (fare?: Fare) => {
 const getOrderComissionSerialized = (fare?: Fare) => {
   let result = getOrderComission(fare);
   return { appjusto: serializeValue(result * -1), appjustoNumber: result };
+};
+const getBusinessDiscountSerialized = (fare?: Fare, coupon?: Coupon | null) => {
+  const discount = getBusinessDiscount(fare, coupon);
+  return serializeValue(discount * -1);
 };
 const getOrderNetValueSerialized = (
   fare: Fare | undefined,
@@ -87,6 +92,7 @@ const headers = [
   { label: 'Valor do pedido', key: 'value' },
   { label: 'Taxa financeira', key: 'iugu' },
   { label: 'Comissão (appjusto)', key: 'appjusto' },
+  { label: 'Cupom', key: 'coupon' },
   { label: 'Extras', key: 'extras' },
   { label: 'Valor líquido', key: 'netValue' },
   { label: 'Método de pagamento', key: 'paymentMethod' },
@@ -119,6 +125,7 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
     const { appjusto, appjustoNumber } = getOrderComissionSerialized(
       order.fare
     );
+    const coupon = getBusinessDiscountSerialized(order.fare, order.coupon);
     const { extras, extrasNumber } = getOrderExtrasValueSerialazed(order.fare);
     const netValue = getOrderNetValueSerialized(
       order.fare,
@@ -143,6 +150,7 @@ export const getOrdersCsvData = (orders?: WithId<Order>[]) => {
       value,
       iugu,
       appjusto,
+      coupon,
       extras,
       netValue,
       paymentMethod,
