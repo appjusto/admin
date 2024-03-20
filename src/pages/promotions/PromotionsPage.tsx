@@ -36,7 +36,7 @@ const PromotionsPage = () => {
       />
       <SectionTitle>{t('Principais tipos de cupons')}</SectionTitle>
       <Flex mt="6" flexDir={{ base: 'column', md: 'row' }} gap="4">
-        <Link to={`${path}/new?type=delivery-free`} style={{ flex: 1 }}>
+        <Link to={`${path}/new?type=food-discount`} style={{ flex: 1 }}>
           <Flex
             p="4"
             minH="128px"
@@ -48,11 +48,9 @@ const PromotionsPage = () => {
           >
             <Icon as={couponIcon} w="8" h="8" minW="8" />
             <Box experimental_spaceY="2">
-              <Text fontSize="lg">{t('Entrega grátis')}</Text>
+              <Text fontSize="lg">{t('Desconto nos produtos')}</Text>
               <Text fontSize="xs">
-                {t(
-                  'Cupons válidos para qualquer pedido, dentro do seu raio de entrega'
-                )}
+                {t('Crie um cupom de desconto nos seus produtos')}
               </Text>
             </Box>
           </Flex>
@@ -71,14 +69,12 @@ const PromotionsPage = () => {
             <Box experimental_spaceY="2">
               <Text fontSize="lg">{t('Desconto na entrega')}</Text>
               <Text fontSize="xs">
-                {t(
-                  'Você pode definir um valor mínimo em produtos e o quanto deseja subsidiar da entrega'
-                )}
+                {t('Crie um cupom de desconto no valor da entrega')}
               </Text>
             </Box>
           </Flex>
         </Link>
-        <Link to={`${path}/new?type=food-discount`} style={{ flex: 1 }}>
+        <Link to={`${path}/new?type=delivery-free`} style={{ flex: 1 }}>
           <Flex
             p="4"
             minH="128px"
@@ -90,10 +86,10 @@ const PromotionsPage = () => {
           >
             <Icon as={couponIcon} w="8" h="8" minW="8" />
             <Box experimental_spaceY="2">
-              <Text fontSize="lg">{t('Desconto nos produtos')}</Text>
+              <Text fontSize="lg">{t('Entrega grátis')}</Text>
               <Text fontSize="xs">
                 {t(
-                  'Você pode definir um valor mínimo em produtos e o desconto que deseja aplicar'
+                  'Crie um cupom de entrega grátis, para pedidos dentro do seu raio'
                 )}
               </Text>
             </Box>

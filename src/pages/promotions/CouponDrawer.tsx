@@ -205,13 +205,13 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   {isBackoffice ? (
                     <Radio value="referral">{t('Referência')}</Radio>
                   ) : null}
-                  <Radio value="delivery-free">{t('Entrega grátis')}</Radio>
-                  <Radio value="delivery-discount">
-                    {t('Desconto na entrega')}
-                  </Radio>
                   <Radio value="food-discount">
                     {t('Desconto nos produtos')}
                   </Radio>
+                  <Radio value="delivery-discount">
+                    {t('Desconto na entrega')}
+                  </Radio>
+                  <Radio value="delivery-free">{t('Entrega grátis')}</Radio>
                 </Stack>
               </RadioGroup>
               <SectionTitle mt="6">{t('Restrições de uso')}</SectionTitle>
