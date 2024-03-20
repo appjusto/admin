@@ -16,7 +16,7 @@ export const BusinessOrdersTableItem = ({ order }: ItemProps) => {
   // context
   const { path } = useRouteMatch();
   // helpers
-  const total = getFoodOrderTotal(order, false);
+  const total = getFoodOrderTotal(order);
   // UI
   return (
     <Tr key={order.id} color="black" fontSize="15px" lineHeight="21px">

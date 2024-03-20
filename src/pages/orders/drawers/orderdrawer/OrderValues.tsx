@@ -1,15 +1,16 @@
 import { Order, OrderStatus, WithId } from '@appjusto/types';
 import { Badge, Box, Text } from '@chakra-ui/react';
+import { getFoodOrderTotal } from 'pages/backoffice/orders/utils';
 import {
   invoiceStatusPTOptions,
   paymentMethodPTOptions,
 } from 'pages/backoffice/utils';
 import {
   getBusinessDiscount,
-  getBusinessTotalPaid,
   getOrderPaymentChannel,
 } from 'pages/orders/utils';
 import React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { formatCurrency } from 'utils/formatters';
 import { t } from 'utils/i18n';
 import { SectionTitle } from '../../../backoffice/drawers/generics/SectionTitle';
@@ -21,11 +22,15 @@ interface DetailsProps {
 }
 
 export const OrderValues = ({ order }: DetailsProps) => {
+  const { path } = useRouteMatch();
   // helpers
+  const isBackoffice = path.includes('/backoffice');
   const courierPaid = order?.fare?.courier?.value ?? 0;
   const discount = getBusinessDiscount(order?.fare, order?.coupon);
-  const businessPaid = getBusinessTotalPaid(order?.fare, discount);
-  const totalPaid = courierPaid + (businessPaid ?? 0);
+  const businessPaid = order?.fare?.business?.value ?? 0;
+  const generalDiscount = order?.fare?.discount ?? 0;
+  const totalPaid = courierPaid + businessPaid - generalDiscount;
+  const totalReceived = getFoodOrderTotal(order);
   const consumerCredits = order?.fare?.credits ?? 0;
   const isPaymentPendding =
     getOrderPaymentChannel(order?.paymentMethod) === 'offline';
@@ -49,9 +54,6 @@ export const OrderValues = ({ order }: DetailsProps) => {
           {t('Frete:')}{' '}
           <Text as="span" color="black">
             {formatCurrency(courierPaid)}
-            {courierPaid > 0 &&
-              order?.fare?.courier?.payee === 'business' &&
-              ` (${t('recebido pelo restaurante')})`}
           </Text>
         </Text>
       )}
@@ -60,25 +62,54 @@ export const OrderValues = ({ order }: DetailsProps) => {
         <Text as="span" color="black">
           {businessPaid ? formatCurrency(businessPaid) : 'N/E'}
         </Text>
-        {discount ? (
-          <Text ml="2" as="span" color="black" fontSize="sm">
-            ({formatCurrency(discount) + t(' via cupom')})
-          </Text>
-        ) : null}
       </Text>
-      <Text mt="1" fontSize="md">
-        {t('Total:')}{' '}
-        <Text as="span" color="black">
-          {formatCurrency(totalPaid)}
+      {isBackoffice && generalDiscount ? (
+        <Text mt="1" fontSize="md">
+          {t('Cupom:')}{' '}
+          <Text as="span" color="black">
+            -{formatCurrency(generalDiscount)}
+          </Text>
         </Text>
-        {consumerCredits > 0 ? (
-          <Text ml="2" as="span" color="black" fontSize="sm">
-            (
-            {formatCurrency(consumerCredits) + t(' via créditos do consumidor')}
-            )
+      ) : null}
+      {!isBackoffice && discount ? (
+        <Text mt="1" fontSize="md">
+          {t('Cupom:')}{' '}
+          <Text as="span" color="black">
+            -{formatCurrency(discount)}
           </Text>
-        ) : null}
-      </Text>
+        </Text>
+      ) : null}
+      {isBackoffice ? (
+        <Text mt="1" fontSize="md">
+          {t('Total pago:')}{' '}
+          <Text as="span" color="black">
+            {formatCurrency(totalPaid)}
+          </Text>
+          {consumerCredits > 0 ? (
+            <Text ml="2" as="span" color="black" fontSize="sm">
+              (
+              {formatCurrency(consumerCredits) +
+                t(' via créditos do consumidor')}
+              )
+            </Text>
+          ) : null}
+        </Text>
+      ) : (
+        <Text mt="1" fontSize="md">
+          {t('Total recebido:')}{' '}
+          <Text as="span" color="black">
+            {formatCurrency(totalReceived)}
+          </Text>
+          {consumerCredits > 0 ? (
+            <Text ml="2" as="span" color="black" fontSize="sm">
+              (
+              {formatCurrency(consumerCredits) +
+                t(' via créditos do consumidor')}
+              )
+            </Text>
+          ) : null}
+        </Text>
+      )}
       {order?.fare?.business?.status !== undefined && (
         <>
           <Text mt="1" fontSize="md">

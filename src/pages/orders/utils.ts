@@ -93,17 +93,6 @@ export const getBusinessDiscount = (fare?: Fare, coupon?: Coupon | null) => {
   return fare?.discount ?? 0;
 };
 
-export const getBusinessTotalPaid = (
-  fare: Fare | undefined,
-  discount: number
-) => {
-  if (fare?.business?.paid !== undefined) {
-    return fare.business.paid;
-  }
-  const value = fare?.business?.value ?? 0;
-  return value - discount;
-};
-
 export const getOrderPaymentChannel = (
   paymentMethod?: PayableWith
 ): 'online' | 'offline' => {
