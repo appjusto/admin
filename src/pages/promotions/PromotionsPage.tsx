@@ -108,7 +108,20 @@ const PromotionsPage = () => {
             return <CouponCard key={coupon.id} coupon={coupon} />;
           })
         ) : (
-          <p>nenhum cupom adicionado</p>
+          <Flex
+            w="full"
+            p="12"
+            justifyContent="center"
+            bgColor="gray.50"
+            borderRadius="lg"
+          >
+            <Flex flexDir="column" alignItems="center">
+              <Text fontSize="sm" maxW="360px" textAlign="center">
+                Clique nos cartões acima, para começar a criar seus cupons de
+                descontos
+              </Text>
+            </Flex>
+          </Flex>
         )}
       </Flex>
       <Switch>
