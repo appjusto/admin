@@ -99,6 +99,15 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
         },
       });
     }
+    if (code.length < 5) {
+      return dispatchAppRequestResult({
+        status: 'error',
+        requestId: 'promotion-submit-error',
+        message: {
+          title: 'O código precisa ter entre 5 e 14 caracteres.',
+        },
+      });
+    }
     try {
       if (isNew) {
         const changes: Pick<
@@ -286,7 +295,7 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
               <SectionTitle mt="6">{t('Código do cupom')}</SectionTitle>
               <Text mt="1" fontSize="xs">
                 {t(
-                  'Crie e compartilhe esse código com seus clientes, usando suas redes'
+                  'Crie e compartilhe esse código com seus clientes, usando suas redes. O código deve conter de 5 a 14 caracteres e ser formado apenas por letras e números.'
                 )}
               </Text>
               <CustomPatternInput
@@ -302,7 +311,10 @@ export const CouponDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                 isDisabled={type === 'referral'}
               />
               <Text fontSize="xs" color="gray.700">
-                {code?.length}/14
+                <Text as="span" color={code.length < 5 ? 'red' : 'inherit'}>
+                  {code?.length}
+                </Text>
+                /14
               </Text>
               {isBackoffice && couponId !== 'new' ? (
                 <>
