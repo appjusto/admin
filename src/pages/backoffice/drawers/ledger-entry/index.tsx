@@ -51,6 +51,11 @@ type Params = {
 
 type StateAccountType = AccountType | 'consumer';
 
+const approvedOnOperations: LedgerEntryOperation[] = [
+  'marketing-credit',
+  'finders-fee',
+];
+
 export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
   //context
   const { entryId } = useParams<Params>();
@@ -87,6 +92,10 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
     userAbility?.can('update', 'invoices') &&
     entry?.status &&
     !['paid', 'processing', 'canceled'].includes(entry.status);
+  const approvedDate =
+    entry?.operation && approvedOnOperations.includes(entry.operation)
+      ? entry.approvedOn
+      : entry?.createdOn;
   // handlers
   const handleSubmit = () => {
     if (!user) {
@@ -252,6 +261,18 @@ export const LedgerEntryDrawer = ({ onClose, ...props }: BaseDrawerProps) => {
                   {t('Criada em:')}{' '}
                   <Text as="span" fontWeight="500">
                     {getDateAndHour(entry?.createdOn)}
+                  </Text>
+                </Text>
+                <Text
+                  mt="2"
+                  fontSize="15px"
+                  color="black"
+                  fontWeight="700"
+                  lineHeight="22px"
+                >
+                  {t('Aprovada em:')}{' '}
+                  <Text as="span" fontWeight="500">
+                    {getDateAndHour(approvedDate)}
                   </Text>
                 </Text>
                 {entry?.updatedOn && (
