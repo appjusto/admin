@@ -269,7 +269,10 @@ export const OrderTracking = ({
             borderRadius="16px"
           >
             {filteredLogs.map((log, index) => {
-              if (log.type === 'change') {
+              if (
+                log.type === 'change' ||
+                (!log.type && 'after' in log && 'before' in log)
+              ) {
                 return (
                   <Text
                     key={log.id}
@@ -303,23 +306,25 @@ export const OrderTracking = ({
                     </Text>
                   </Text>
                 );
-              }
-              return (
-                <Text
-                  key={log.id}
-                  mt="2"
-                  fontSize="15px"
-                  lineHeight="21px"
-                  fontWeight="700"
-                  color="green.700"
-                >
-                  {log.info[1]}
-                  {': '}
-                  <Text as="span" fontWeight="500">
-                    {t(' às ') + getFullTime(log.timestamp)}
+              } else if (log.info?.length && log.info?.length > 1) {
+                return (
+                  <Text
+                    key={log.id}
+                    mt="2"
+                    fontSize="15px"
+                    lineHeight="21px"
+                    fontWeight="700"
+                    color="green.700"
+                  >
+                    {log.info[1]}
+                    {': '}
+                    <Text as="span" fontWeight="500">
+                      {t(' às ') + getFullTime(log.timestamp)}
+                    </Text>
                   </Text>
-                </Text>
-              );
+                );
+              }
+              return null;
             })}
           </Box>
           <Box mt="2" py="1" px="4" bgColor="#F6F6F6" borderRadius="16px">
