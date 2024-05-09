@@ -34,7 +34,7 @@ export const getOrderProductsValue = (fare?: Fare, coupon?: Coupon | null) => {
   let result = fare?.business?.paid ?? 0;
   if (
     coupon?.createdBy.flavor === 'business' &&
-    coupon.type !== 'food-discount'
+    coupon.type === 'food-discount'
   ) {
     result -= fare?.discount ?? 0;
   }
@@ -48,7 +48,7 @@ export const getOrderDeliveryValue = (fare?: Fare, coupon?: Coupon | null) => {
   }
   if (
     coupon?.createdBy.flavor === 'business' &&
-    coupon.type !== 'food-discount'
+    (coupon.type === 'delivery-discount' || coupon.type === 'delivery-free')
   ) {
     value -= fare?.discount ?? 0;
   }
