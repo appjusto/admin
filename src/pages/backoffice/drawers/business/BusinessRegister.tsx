@@ -6,15 +6,15 @@ import { useContextBusinessBackoffice } from 'app/state/business/businessBOConte
 import { ProfileNotes } from 'common/components/backoffice/ProfileNotes';
 import { CustomInput } from 'common/components/form/input/CustomInput';
 import { CustomNumberInput as NumberInput } from 'common/components/form/input/CustomNumberInput';
+import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment';
+import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import {
   BusinessPhoneField,
   BusinessPhones,
 } from 'pages/business-profile/business-phones';
-import { BusinessFulfillment } from 'pages/business-profile/BusinessFulfillment';
-import { BusinessPreparationModes } from 'pages/business-profile/BusinessPreparationModes';
 import { t } from 'utils/i18n';
-import { SectionTitle } from '../generics/SectionTitle';
 import { ProfileTags } from '../ProfileTags';
+import { SectionTitle } from '../generics/SectionTitle';
 import BOBankingInformation from './forms/BOBankingInformation';
 import { BOBusinessAddress } from './forms/BOBusinessAddress';
 import { BOBusinessProfile } from './forms/BOBusinessProfile';
@@ -130,6 +130,7 @@ export const BusinessRegister = () => {
             'consumer-home',
             'consumer-home-mousse',
             'dispatch-by-courier',
+            'justissimos',
           ] as BusinessTag[]
         }
         updateProfile={(tags) => updateBusinessProfile({ tags })}

@@ -81,7 +81,7 @@ export const getOrderNetValue = (
   extras: number,
   coupon?: Coupon | null
 ) => {
-  const products = getOrderProductsValue(fare);
+  const products = getOrderProductsValue(fare, coupon);
   const delivery = getOrderDeliveryValue(fare, coupon);
   // if (!isOrdersCount(fare)) return 0;
   let businessValue = products + delivery;
