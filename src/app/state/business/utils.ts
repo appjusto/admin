@@ -1,47 +1,6 @@
-import { BankAccount, Business, WithId } from '@appjusto/types';
+import { BankAccount } from '@appjusto/types';
 import { BackofficeProfileValidation } from 'common/types';
-import { isEqual } from 'lodash';
 import { AppDispatch } from '../requests/context';
-
-type K = keyof WithId<Business>;
-
-export const getBusinessChangedKeys = (
-  prevState: WithId<Business>,
-  nextState: WithId<Business>
-): K[] => {
-  let changedKeys = [] as K[];
-  const keys = [
-    // primitive types
-    'name',
-    'companyName',
-    'cnpj',
-    'phone',
-    'phones',
-    'status',
-    'situation',
-    'enabled',
-    'profileIssuesMessage',
-    'cuisine',
-    'description',
-    'minimumOrder',
-    'averageCookingTime',
-    'orderAcceptanceTime',
-    'deliveryRange',
-    'onboarding',
-    'logoExists',
-    'coverImageExists',
-    'orderPrinting',
-    'slug',
-    'settings',
-    // object types
-    'managers',
-    'profileIssues',
-    'businessAddress',
-    'schedules',
-  ] as K[];
-  keys.forEach((key) => !isEqual(prevState[key], nextState[key]) && changedKeys.push(key));
-  return changedKeys;
-};
 
 export const bankingInfoIsEmpty = (bankingInfo?: BankAccount) => {
   if (!bankingInfo) return true;
@@ -52,7 +11,8 @@ export const getValidationStatus = (
   validation: BackofficeProfileValidation,
   dispatch: AppDispatch
 ) => {
-  const { cnpj, profile, cep, address, deliveryRange, agency, account } = validation;
+  const { cnpj, profile, cep, address, deliveryRange, agency, account } =
+    validation;
   if (!cnpj) {
     dispatch({
       status: 'error',

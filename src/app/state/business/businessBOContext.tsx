@@ -91,6 +91,7 @@ const businessKeys: (keyof Business)[] = [
   'minHoursForScheduledOrders',
   'reviews',
   'services',
+  'referral',
   'availableAt',
 ];
 interface Props {

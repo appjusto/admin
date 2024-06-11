@@ -13,8 +13,8 @@ import { useObserveAreasByCity } from 'app/api/areas/useObserveAreasByCity';
 import { useObserveBannersByFlavor } from 'app/api/banners/useObserveBannersByFlavor';
 import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile';
 import { useBusinessProfileImages } from 'app/api/business/profile/useBusinessProfileImages';
-import { useObserveBusinessesManagedBy } from 'app/api/business/profile/useObserveBusinessesManagedBy';
 import { useObserveBusinessProfile } from 'app/api/business/profile/useObserveBusinessProfile';
+import { useObserveBusinessesManagedBy } from 'app/api/business/profile/useObserveBusinessesManagedBy';
 import { BusinessUnit } from 'app/api/business/types';
 import { useObserveBusinessFleet } from 'app/api/fleet/useObserveBusinessFleet';
 import { useGetManagers } from 'app/api/manager/useGetManagers';
@@ -59,6 +59,7 @@ const watchedFields: (keyof Business)[] = [
   'services',
   'fleetsIdsAllowed',
   'acceptedPaymentMethods',
+  'referral',
   // object types
   'managers',
   'profileIssues',
