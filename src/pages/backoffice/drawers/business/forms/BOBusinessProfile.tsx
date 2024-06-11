@@ -74,6 +74,13 @@ export const BOBusinessProfile = () => {
         onChangeValue={(value) => handleChange('minimumOrder', value)}
         maxLength={8}
       />
+      <Input
+        id="business-referral"
+        label={t('Código de indicação')}
+        placeholder={t('Código de indicação')}
+        value={business?.referral ?? ''}
+        onChange={(ev) => handleChange('referral', ev.target.value)}
+      />
     </Box>
   );
 };

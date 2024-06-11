@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Center,
+  HStack,
   Link,
   ListItem,
   Spinner,
@@ -13,6 +14,8 @@ import { useBusinessProfile } from 'app/api/business/profile/useBusinessProfile'
 import { useBusinessProfileValidation } from 'app/api/business/profile/useBusinessProfileValidation';
 import { useContextBusiness } from 'app/state/business/context';
 import { AlertWarning } from 'common/components/AlertWarning';
+import { CustomButton } from 'common/components/buttons/CustomButton';
+import { CustomPatternInput as Input } from 'common/components/form/input/pattern-input/CustomPatternInput';
 import React from 'react';
 import { getBusinessService } from 'utils/functions';
 import { t } from 'utils/i18n';
@@ -101,6 +104,7 @@ export const RegistrationStatus = () => {
   const [rejection, setRejection] = React.useState<string[]>([]);
   const [isOusideArea, setIsOusideArea] = React.useState<boolean>();
   const [isMenuModalOpen, setIsMenuModalOpen] = React.useState<boolean>(false);
+  const [referral, setReferral] = React.useState(business?.referral ?? '');
   // helpers
   const isValid = React.useMemo(
     () => validation.filter((data) => data.status === false).length === 0,
@@ -121,6 +125,11 @@ export const RegistrationStatus = () => {
         situation: 'submitted',
       });
     }
+  };
+  const handleUpdateReferral = () => {
+    updateBusinessProfile({
+      referral,
+    });
   };
   // side effects
   React.useEffect(() => {
@@ -224,6 +233,40 @@ export const RegistrationStatus = () => {
                 />
               );
             })}
+          </VStack>
+          <VStack
+            mt="4"
+            spacing={2}
+            // justifyContent="space-between"
+            alignItems="flex-start"
+            border={'1px solid #F6F6F6'}
+            borderRadius="lg"
+            px="4"
+            py={'4'}
+          >
+            <Text fontSize="16px" lineHeight="22px" fontWeight="700">
+              Alguém te indicou o Appjusto? Digite o código da pessoa:
+            </Text>
+            <HStack>
+              <Input
+                id={`referral`}
+                label={t('Código')}
+                aria-label={`referral`}
+                value={referral}
+                minLength={5}
+                maxLength={14}
+                onValueChange={(value) => setReferral(value)}
+                formatter={(value) => (value ?? '').toUpperCase()}
+              />
+              <CustomButton
+                // mt="4"
+                // h="48px"
+                alignSelf="flex-end"
+                variant="outline"
+                label={'Salvar'}
+                onClick={handleUpdateReferral}
+              />
+            </HStack>
           </VStack>
           <Button
             mt="4"

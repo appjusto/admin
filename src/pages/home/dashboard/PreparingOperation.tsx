@@ -1,17 +1,21 @@
 import { Box, Button, Flex, Icon, Link, Text } from '@chakra-ui/react';
+import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { IoMdTime } from 'react-icons/io';
 import { t } from 'utils/i18n';
 import { Operation1 } from './communication/Operation1';
 import { Operation2 } from './communication/Operation2';
 import { Operation3 } from './communication/Operation3';
+import BannersContainer from './panel/banners/BannersContainer';
 
 export const PreparingOperation = () => {
+  const { banners } = useContextBusiness();
   React.useEffect(() => {
     window?.scrollTo(0, 0);
   }, []);
   return (
     <Box mt="6">
+      <BannersContainer banners={banners} />
       <Text fontSize="4xl" color="black">
         {t('Boas-vindas ao appjusto')}
       </Text>
