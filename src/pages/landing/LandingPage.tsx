@@ -1,15 +1,10 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useContextMeasurement } from 'app/state/measurement/context';
-import { CookiesBar } from 'common/components/CookiesBar';
+import Image from 'common/components/Image';
+import leftImage from 'common/img/login-left@2x.jpg';
+import rightImage from 'common/img/login-right@2x.jpg';
 import React from 'react';
-import { CalculatorCall } from './CalculatorCall';
-import { ForYourBusiness } from './ForYourBusiness';
-import { Header } from './Header';
-import { Hero } from './Hero';
-import { LandingPageFooter } from './LandingPageFooter';
 import { RegistrationForm } from './RegistrationForm';
-import { Share } from './Share';
-import { Transparency } from './Transparency';
 
 const LandingPage = () => {
   // context
@@ -20,17 +15,24 @@ const LandingPage = () => {
   }, [handlePixelEvent]);
   // UI
   return (
-    <Box>
-      <Header />
-      <Hero />
-      <RegistrationForm />
-      <Transparency />
-      <ForYourBusiness />
-      <CalculatorCall />
-      <Share />
-      <CookiesBar />
-      <LandingPageFooter />
-    </Box>
+    <Flex w="100wh" h="100vh" justifyContent={{ sm: 'center' }}>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
+        <Image src={leftImage} scrollCheck={false} w="100%" h="100vh" />
+      </Box>
+      <Flex
+        position="relative"
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        w={{ base: '100%', md: '80%', lg: 1 / 3 }}
+        px={{ base: '8', md: '24', lg: '8' }}
+      >
+        <RegistrationForm />
+      </Flex>
+      <Box w={{ lg: 1 / 3 }} display={{ base: 'none', lg: 'block' }}>
+        <Image src={rightImage} scrollCheck={false} w="100%" h="100vh" />
+      </Box>
+    </Flex>
   );
 };
 

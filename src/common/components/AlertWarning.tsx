@@ -1,4 +1,11 @@
-import { Alert, AlertDescription, AlertIcon, AlertProps, AlertTitle, Flex } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertProps,
+  AlertTitle,
+  Flex,
+} from '@chakra-ui/react';
 
 interface Props extends AlertProps {
   title?: string;
@@ -7,13 +14,20 @@ interface Props extends AlertProps {
   children?: React.ReactNode | React.ReactNode[];
 }
 
-export const AlertWarning = ({ title, description, icon = true, children, ...props }: Props) => (
+export const AlertWarning = ({
+  title,
+  description,
+  icon = true,
+  children,
+  ...props
+}: Props) => (
   <Alert
     mt="4"
     status="warning"
     color="black"
     border="1px solid #FFBE00"
     borderRadius="lg"
+    textAlign="start"
     {...props}
   >
     {icon && <AlertIcon />}
