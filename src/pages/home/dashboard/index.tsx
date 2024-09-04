@@ -1,4 +1,4 @@
-import { Flex, Icon, Link, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Link, Stack, Text } from '@chakra-ui/react';
 import { useContextBusiness } from 'app/state/business/context';
 import React from 'react';
 import { IoIosWarning } from 'react-icons/io';
@@ -35,23 +35,32 @@ const Dashboard = () => {
         }
         subtitle={t(`Dados atualizados em ${dateTime}`)}
       />
-      {business?.situation === 'approved' && (
-        <Flex
-          mt="6"
-          border="1px solid #FFBE00"
-          borderRadius="lg"
-          bgColor="#FFF6D9"
-          px="6"
-          py="5"
-        >
+      <Flex
+        mt="6"
+        border="1px solid #FFBE00"
+        borderRadius="lg"
+        bgColor="#FFF6D9"
+        px="6"
+        py="5"
+        alignItems="center"
+        justifyContent="space-between"
+        gap="4"
+      >
+        <Flex alignItems="center" gap="4">
           <Icon as={IoIosWarning} w="6" h="6" color="#FFBE00" />
-          <Text color="black" ml="2">
-            {t(
-              'Deixe sempre a janela do painel aberta e o som do computador ligado.'
-            )}
-          </Text>
+          <Box>
+            <Text color="black">
+              {t('Encerraremos nossa operação no dia 08/09/2024')}
+            </Text>
+            <Text>
+              {t('Leia o comunicado de encerramento das operações do appjusto')}
+            </Text>
+          </Box>
         </Flex>
-      )}
+        <Link href="https://appjusto.com.br" target="_blank">
+          <Button variant="secondary">{t('Ler comunicado')}</Button>
+        </Link>
+      </Flex>
       {business?.situation !== 'approved' ? (
         <RegistrationStatus />
       ) : isOperationValidated ? (
