@@ -50,7 +50,9 @@ const Dashboard = () => {
           <Icon as={IoIosWarning} w="6" h="6" color="#FFBE00" />
           <Box>
             <Text color="black">
-              {t('Encerraremos nossa operação no dia 08/09/2024')}
+              {t(
+                'Nosas operações estão suspensas. Verifique se há algum saldo em sua conta e realize o saque'
+              )}
             </Text>
             <Text>
               {t('Leia o comunicado de encerramento das operações do appjusto')}
