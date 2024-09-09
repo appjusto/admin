@@ -49,13 +49,9 @@ const Dashboard = () => {
         <Flex alignItems="center" gap="4">
           <Icon as={IoIosWarning} w="6" h="6" color="#FFBE00" />
           <Box>
-            <Text color="black">
-              {t(
-                'Nosas operações estão suspensas. Verifique se há algum saldo em sua conta e realize o saque'
-              )}
-            </Text>
+            <Text color="black">{t('Nosas operações estão suspensas')}</Text>
             <Text>
-              {t('Leia o comunicado de encerramento das operações do appjusto')}
+              {t('Verifique se há algum saldo em sua conta e realize o saque')}
             </Text>
           </Box>
         </Flex>
